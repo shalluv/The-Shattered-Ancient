@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://hero_projectile_001"]
+
+[ext_resource type="Script" path="res://scenes/entities/enemies/HeroProjectile.gd" id="1_hproj"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_hproj"]
+radius = 3.0
+
+[node name="HeroProjectile" type="Area2D"]
+collision_layer = 0
+collision_mask = 1
+script = ExtResource("1_hproj")
+
+[node name="ProjectileVisual" type="ColorRect" parent="."]
+# TODO: Replace with hero projectile art asset
+mouse_filter = 2
+offset_left = -2.0
+offset_top = -1.0
+offset_right = 2.0
+offset_bottom = 1.0
+color = Color(0.545, 0, 0, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_hproj")
+
+[node name="ImpactParticles" type="GPUParticles2D" parent="."]
+emitting = false

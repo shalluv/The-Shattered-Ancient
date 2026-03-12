@@ -1,0 +1,39 @@
+[gd_scene format=3 uid="uid://hero_omniknight_001"]
+
+[ext_resource type="Script" path="res://scenes/entities/enemies/HeroOmniknight.gd" id="1_omni"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_omni_physics"]
+radius = 12.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_omni_hitbox"]
+radius = 18.0
+
+[node name="HeroOmniknight" type="CharacterBody2D"]
+collision_layer = 2
+collision_mask = 9
+script = ExtResource("1_omni")
+
+[node name="PhysicsCollision" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_omni_physics")
+
+[node name="EnemyVisual" type="ColorRect" parent="."]
+# TODO: Replace with Omniknight art asset
+offset_left = -10.0
+offset_top = -10.0
+offset_right = 10.0
+offset_bottom = 10.0
+color = Color(1, 0.98, 0.8, 1)
+
+[node name="HitboxArea" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HitboxArea"]
+shape = SubResource("CircleShape2D_omni_hitbox")
+
+[node name="DeathParticles" type="GPUParticles2D" parent="."]
+emitting = false
+
+[node name="DamageCooldownTimer" type="Timer" parent="."]
+wait_time = 1.4
+one_shot = true

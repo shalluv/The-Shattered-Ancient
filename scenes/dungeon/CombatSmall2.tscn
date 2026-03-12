@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://cdo0ht20dw5ev"]
+
+[ext_resource type="PackedScene" uid="uid://cskmrgh1jyvnk" path="res://scenes/dungeon/RoomBase.tscn" id="1_base"]
+[ext_resource type="Script" path="res://scenes/dungeon/CombatSmall2.gd" id="2_script"]
+
+[node name="CombatSmall2" instance=ExtResource("1_base")]
+script = ExtResource("2_script")
+room_size = Vector2(800, 600)
+
+[node name="PlayerSpawnPoint" type="Marker2D" parent="."]
+position = Vector2(400, 500)
+
+[node name="EnemySpawnPoint1" type="Marker2D" parent="."]
+position = Vector2(350, 280)
+
+[node name="EnemySpawnPoint2" type="Marker2D" parent="."]
+position = Vector2(450, 280)
+
+[node name="EnemySpawnPoint3" type="Marker2D" parent="."]
+position = Vector2(400, 300)
+
+[node name="EnemySpawnPoint4" type="Marker2D" parent="."]
+position = Vector2(350, 320)
+
+[node name="EnemySpawnPoint5" type="Marker2D" parent="."]
+position = Vector2(450, 320)

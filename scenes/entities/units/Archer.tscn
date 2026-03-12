@@ -1,0 +1,50 @@
+[gd_scene load_steps=4 format=3 uid="uid://b1archer000001"]
+
+[ext_resource type="Script" path="res://scenes/entities/units/Archer.gd" id="1_archer"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_archer"]
+radius = 13.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_archer_physics"]
+radius = 5.0
+
+[node name="Archer" type="CharacterBody2D"]
+collision_layer = 1
+collision_mask = 10
+script = ExtResource("1_archer")
+unit_type = "archer"
+unit_color = Color(1.0, 0.647, 0.0, 1.0)
+max_hp = 1
+damage = 1
+pursuit_range = 180.0
+
+[node name="PhysicsCollision" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_archer_physics")
+
+[node name="SelectionIndicator" type="ColorRect" parent="."]
+mouse_filter = 2
+visible = false
+offset_left = -6.0
+offset_top = -6.0
+offset_right = 6.0
+offset_bottom = 6.0
+color = Color(1.0, 1.0, 1.0, 0.3)
+
+[node name="UnitVisual" type="ColorRect" parent="."]
+# TODO: Replace with archer unit art asset
+mouse_filter = 2
+offset_left = -4.0
+offset_top = -4.0
+offset_right = 4.0
+offset_bottom = 4.0
+color = Color(1.0, 0.647, 0.0, 1.0)
+
+[node name="HitboxArea" type="Area2D" parent="."]
+collision_layer = 1
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HitboxArea"]
+shape = SubResource("CircleShape2D_archer")
+
+[node name="DeathParticles" type="GPUParticles2D" parent="."]
+emitting = false

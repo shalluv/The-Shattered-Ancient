@@ -1,0 +1,28 @@
+[gd_scene load_steps=3 format=3 uid="uid://b1swrmcor00001"]
+
+[ext_resource type="Script" path="res://scenes/entities/SwarmCore.gd" id="1_swarm"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_core"]
+radius = 8.0
+
+[node name="SwarmCore" type="CharacterBody2D"]
+collision_layer = 0
+collision_mask = 0
+script = ExtResource("1_swarm")
+
+[node name="CoreVisual" type="ColorRect" parent="."]
+# TODO: Replace with radiant ore core art asset
+mouse_filter = 2
+visible = false
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+color = Color(1.0, 0.98, 0.804, 1.0)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+disabled = true
+shape = SubResource("CircleShape2D_core")
+
+[node name="DestinationIndicator" type="GPUParticles2D" parent="."]
+emitting = false

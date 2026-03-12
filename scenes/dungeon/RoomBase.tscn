@@ -1,0 +1,60 @@
+[gd_scene format=3 uid="uid://cskmrgh1jyvnk"]
+
+[ext_resource type="Script" uid="uid://bvul6ruotiv5p" path="res://scenes/dungeon/RoomBase.gd" id="1_room"]
+[ext_resource type="Script" uid="uid://4sryk33aker8" path="res://scenes/dungeon/GameCamera.gd" id="2_camera"]
+
+[node name="RoomBase" type="Node2D" unique_id=151539257]
+script = ExtResource("1_room")
+
+[node name="Floor" type="ColorRect" parent="." unique_id=918398412]
+offset_right = 1024.0
+offset_bottom = 768.0
+color = Color(0.051, 0.102, 0.051, 1)
+
+[node name="Walls" type="Node2D" parent="." unique_id=1472416901]
+
+[node name="WallTop" type="ColorRect" parent="Walls" unique_id=2070834509]
+offset_right = 1024.0
+offset_bottom = 16.0
+color = Color(0.102, 0.18, 0.102, 1)
+
+[node name="WallBottom" type="ColorRect" parent="Walls" unique_id=1651880142]
+offset_top = 752.0
+offset_right = 1024.0
+offset_bottom = 768.0
+color = Color(0.102, 0.18, 0.102, 1)
+
+[node name="WallLeft" type="ColorRect" parent="Walls" unique_id=1450421094]
+offset_right = 16.0
+offset_bottom = 768.0
+color = Color(0.102, 0.18, 0.102, 1)
+
+[node name="WallRight" type="ColorRect" parent="Walls" unique_id=966230252]
+offset_left = 1008.0
+offset_right = 1024.0
+offset_bottom = 768.0
+color = Color(0.102, 0.18, 0.102, 1)
+
+[node name="Doors" type="Node2D" parent="." unique_id=382947561]
+
+[node name="DoorNorth" type="ColorRect" parent="Doors" unique_id=887505662]
+color = Color(0.3, 0.3, 0.3, 1)
+
+[node name="DoorSouth" type="ColorRect" parent="Doors" unique_id=893406476]
+color = Color(0.3, 0.3, 0.3, 1)
+
+[node name="DoorEast" type="ColorRect" parent="Doors" unique_id=1321819633]
+color = Color(0.3, 0.3, 0.3, 1)
+
+[node name="DoorWest" type="ColorRect" parent="Doors" unique_id=775258268]
+color = Color(0.3, 0.3, 0.3, 1)
+
+[node name="Entities" type="Node2D" parent="." unique_id=271956646]
+
+[node name="GameCamera" type="Camera2D" parent="." unique_id=710950029]
+script = ExtResource("2_camera")
+
+[node name="HUDLayer" type="CanvasLayer" parent="." unique_id=674578259]
+
+[node name="RoomClearParticles" type="GPUParticles2D" parent="." unique_id=103828322]
+emitting = false

@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://c3dmg10one1"]
+
+[ext_resource type="Script" path="res://scenes/terrain/TerrainZone.gd" id="1_script"]
+
+[node name="DamageZone" type="Area2D"]
+script = ExtResource("1_script")
+zone_type = 1
+damage_per_second = 1.0
+zone_size = Vector2(100, 100)

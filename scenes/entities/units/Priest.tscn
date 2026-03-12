@@ -1,0 +1,45 @@
+[gd_scene format=3 uid="uid://cqngjx18jyvnk"]
+
+[ext_resource type="Script" uid="uid://bp8re8v4ue2d8" path="res://scenes/entities/units/Priest.gd" id="1_priest"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_priest_physics"]
+radius = 5.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_priest"]
+radius = 13.0
+
+[node name="Priest" type="CharacterBody2D" unique_id=1837796448]
+collision_mask = 10
+script = ExtResource("1_priest")
+unit_type = "priest"
+unit_color = Color(1, 0.98, 0.804, 1)
+damage = 0
+pursuit_range = 0.0
+
+[node name="PhysicsCollision" type="CollisionShape2D" parent="." unique_id=1371317964]
+shape = SubResource("CircleShape2D_priest_physics")
+
+[node name="SelectionIndicator" type="ColorRect" parent="." unique_id=354417744]
+visible = false
+offset_left = -6.0
+offset_top = -6.0
+offset_right = 6.0
+offset_bottom = 6.0
+mouse_filter = 2
+color = Color(1, 1, 1, 0.3)
+
+[node name="UnitVisual" type="ColorRect" parent="." unique_id=1104035277]
+offset_left = -4.0
+offset_top = -4.0
+offset_right = 4.0
+offset_bottom = 4.0
+color = Color(1, 0.98, 0.804, 1)
+
+[node name="HitboxArea" type="Area2D" parent="." unique_id=1730816002]
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HitboxArea" unique_id=1246465187]
+shape = SubResource("CircleShape2D_priest")
+
+[node name="DeathParticles" type="GPUParticles2D" parent="." unique_id=278716372]
+emitting = false

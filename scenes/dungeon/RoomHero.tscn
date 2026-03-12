@@ -1,0 +1,14 @@
+[gd_scene format=3 uid="uid://cskmrmly7yvnk"]
+
+[ext_resource type="PackedScene" uid="uid://cskmrgh1jyvnk" path="res://scenes/dungeon/RoomBase.tscn" id="1_base"]
+[ext_resource type="Script" path="res://scenes/dungeon/RoomHero.gd" id="2_script"]
+
+[node name="RoomHero" instance=ExtResource("1_base")]
+script = ExtResource("2_script")
+room_size = Vector2(1024, 768)
+
+[node name="PlayerSpawnPoint" type="Marker2D" parent="."]
+position = Vector2(512, 600)
+
+[node name="HeroSpawnPoint" type="Marker2D" parent="."]
+position = Vector2(512, 300)

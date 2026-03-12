@@ -1,0 +1,41 @@
+[gd_scene format=3 uid="uid://cvjgygh1jyvnk"]
+
+[ext_resource type="Script" uid="uid://bsqdwrp8pgmbk" path="res://scenes/entities/units/UnitBase.gd" id="1_unit"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_unit_physics"]
+radius = 5.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_unit"]
+radius = 13.0
+
+[node name="UnitBase" type="CharacterBody2D" unique_id=1413567722]
+collision_mask = 10
+script = ExtResource("1_unit")
+
+[node name="PhysicsCollision" type="CollisionShape2D" parent="." unique_id=177505651]
+shape = SubResource("CircleShape2D_unit_physics")
+
+[node name="SelectionIndicator" type="ColorRect" parent="." unique_id=768174940]
+visible = false
+offset_left = -6.0
+offset_top = -6.0
+offset_right = 6.0
+offset_bottom = 6.0
+mouse_filter = 2
+color = Color(1, 1, 1, 0.3)
+
+[node name="UnitVisual" type="ColorRect" parent="." unique_id=1707901677]
+offset_left = -4.0
+offset_top = -4.0
+offset_right = 4.0
+offset_bottom = 4.0
+color = Color(1, 0.843, 0, 1)
+
+[node name="HitboxArea" type="Area2D" parent="." unique_id=1353735665]
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HitboxArea" unique_id=1111871460]
+shape = SubResource("CircleShape2D_unit")
+
+[node name="DeathParticles" type="GPUParticles2D" parent="." unique_id=717412256]
+emitting = false

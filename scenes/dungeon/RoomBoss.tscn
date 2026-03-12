@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://b1roombss00001"]
+
+[ext_resource type="PackedScene" uid="uid://cskmrgh1jyvnk" path="res://scenes/dungeon/RoomBase.tscn" id="1_base"]
+[ext_resource type="Script" path="res://scenes/dungeon/RoomBoss.gd" id="2_script"]
+
+[node name="RoomBoss" instance=ExtResource("1_base")]
+script = ExtResource("2_script")
+room_size = Vector2(1600, 1000)
+
+[node name="PlayerSpawnPoint" type="Marker2D" parent="."]
+position = Vector2(800, 850)
+
+[node name="BossSpawnPoint" type="Marker2D" parent="."]
+position = Vector2(800, 250)

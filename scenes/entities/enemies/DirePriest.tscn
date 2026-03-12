@@ -1,0 +1,47 @@
+[gd_scene format=3 uid="uid://ceepjuy1dyvnk"]
+
+[ext_resource type="Script" path="res://scenes/entities/enemies/DirePriest.gd" id="1_priest"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_priest"]
+radius = 14.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_priest_physics"]
+radius = 8.0
+
+[node name="DirePriest" type="CharacterBody2D"]
+collision_layer = 2
+collision_mask = 9
+script = ExtResource("1_priest")
+enemy_hp = 3
+move_speed = 30.0
+damage = 0
+enemy_color = Color(0.294, 0.0, 0.51, 1.0)
+
+[node name="PhysicsCollision" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_priest_physics")
+
+[node name="EnemyVisual" type="ColorRect" parent="."]
+# TODO: Replace with DirePriest enemy art asset
+mouse_filter = 2
+offset_left = -7.0
+offset_top = -7.0
+offset_right = 7.0
+offset_bottom = 7.0
+color = Color(0.294, 0.0, 0.51, 1.0)
+
+[node name="HitboxArea" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HitboxArea"]
+shape = SubResource("CircleShape2D_priest")
+
+[node name="DeathParticles" type="GPUParticles2D" parent="."]
+emitting = false
+
+[node name="AbsorptionParticles" type="GPUParticles2D" parent="."]
+emitting = false
+
+[node name="DamageCooldownTimer" type="Timer" parent="."]
+wait_time = 0.3
+one_shot = true

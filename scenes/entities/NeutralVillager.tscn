@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://cwejqfnmbyvnk"]
+
+[ext_resource type="Script" path="res://scenes/entities/NeutralVillager.gd" id="1_villager"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_villager"]
+radius = 5.0
+
+[node name="NeutralVillager" type="CharacterBody2D"]
+collision_layer = 0
+collision_mask = 8
+script = ExtResource("1_villager")
+
+[node name="PhysicsCollision" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_villager")
+
+[node name="VillagerVisual" type="ColorRect" parent="."]
+# TODO: Replace with villager character art asset
+mouse_filter = 2
+offset_left = -4.0
+offset_top = -4.0
+offset_right = 4.0
+offset_bottom = 4.0
+color = Color(0.502, 0.502, 0.502, 1.0)
+
+[node name="DeathParticles" type="GPUParticles2D" parent="."]
+emitting = false

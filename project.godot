@@ -25,6 +25,7 @@ SceneTransition="*res://autoloads/SceneTransition.gd"
 BoonManager="*res://autoloads/BoonManager.gd"
 Pathfinder="*res://autoloads/Pathfinder.gd"
 SynergyManager="*res://autoloads/SynergyManager.gd"
+DebugManager="*res://autoloads/DebugManager.gd"
 
 [display]
 

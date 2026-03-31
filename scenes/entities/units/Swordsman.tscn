@@ -1,4 +1,4 @@
-[gd_scene load_steps=3 format=3 uid="uid://ctsmwi0ujyvnk"]
+[gd_scene format=3 uid="uid://ctsmwi0ujyvnk"]
 
 [ext_resource type="Script" uid="uid://bsqdwrp8pgmbk" path="res://scenes/entities/units/UnitBase.gd" id="1_unit"]
 [ext_resource type="Texture2D" uid="uid://bfiepqx0g5r14" path="res://art/units/swordman/swordman.aseprite" id="2_sprite"]
@@ -7,10 +7,9 @@
 radius = 5.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_sword"]
-radius = 13.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_sword_attack"]
-radius = 20.0
+radius = 14.0
 
 [node name="Swordsman" type="CharacterBody2D" unique_id=711451499]
 collision_mask = 10
@@ -30,14 +29,14 @@ mouse_filter = 2
 color = Color(1, 1, 1, 0.3)
 
 [node name="UnitVisual" type="ColorRect" parent="." unique_id=1070440249]
-mouse_filter = 2
 offset_left = -4.0
 offset_top = -4.0
 offset_right = 4.0
 offset_bottom = 4.0
+mouse_filter = 2
 color = Color(1, 0.843, 0, 0)
 
-[node name="Sprite2D" type="Sprite2D" parent="UnitVisual"]
+[node name="Sprite2D" type="Sprite2D" parent="UnitVisual" unique_id=1593311154]
 position = Vector2(4, 4)
 scale = Vector2(0.25, 0.25)
 texture = ExtResource("2_sprite")
@@ -48,14 +47,14 @@ collision_mask = 2
 [node name="CollisionShape2D" type="CollisionShape2D" parent="HitboxArea" unique_id=1372234959]
 shape = SubResource("CircleShape2D_sword")
 
-[node name="AttackArea" type="Area2D" parent="."]
+[node name="AttackArea" type="Area2D" parent="." unique_id=1855214217]
 collision_layer = 0
 collision_mask = 2
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea" unique_id=813313686]
 shape = SubResource("CircleShape2D_sword_attack")
 
-[node name="AttackCooldownTimer" type="Timer" parent="."]
+[node name="AttackCooldownTimer" type="Timer" parent="." unique_id=760849850]
 wait_time = 0.5
 one_shot = true
 

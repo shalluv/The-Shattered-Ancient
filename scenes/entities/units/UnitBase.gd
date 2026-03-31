@@ -18,10 +18,10 @@ const MELEE_ATTACK_COOLDOWN: float = 0.5
 
 @onready var unit_visual: ColorRect = $UnitVisual
 @onready var hitbox_area: Area2D = $HitboxArea
-@onready var attack_area: Area2D = $AttackArea
+var attack_area: Area2D = null
 @onready var death_particles: GPUParticles2D = $DeathParticles
 @onready var selection_indicator: ColorRect = $SelectionIndicator
-@onready var attack_cooldown_timer: Timer = $AttackCooldownTimer
+var attack_cooldown_timer: Timer = null
 
 var current_hp: int = 1
 var is_dying: bool = false
@@ -55,10 +55,13 @@ func _ready() -> void:
 		unit_visual.color = Color(0, 0, 0, 0)
 	else:
 		unit_visual.color = unit_color
-	attack_area.area_entered.connect(_on_attack_area_entered)
-	attack_cooldown_timer.wait_time = MELEE_ATTACK_COOLDOWN
-	attack_cooldown_timer.one_shot = true
-	attack_cooldown_timer.timeout.connect(_on_attack_cooldown_timeout)
+	attack_area = get_node_or_null("AttackArea")
+	attack_cooldown_timer = get_node_or_null("AttackCooldownTimer")
+	if attack_area and attack_cooldown_timer:
+		attack_area.area_entered.connect(_on_attack_area_entered)
+		attack_cooldown_timer.wait_time = MELEE_ATTACK_COOLDOWN
+		attack_cooldown_timer.one_shot = true
+		attack_cooldown_timer.timeout.connect(_on_attack_cooldown_timeout)
 	if is_reviving:
 		SwarmManager.register_reviving_unit(self)
 	else:
@@ -216,8 +219,9 @@ func finish_revival() -> void:
 	SwarmManager.register_unit(self)
 	hitbox_area.set_deferred("monitoring", true)
 	hitbox_area.set_deferred("monitorable", true)
-	attack_area.set_deferred("monitoring", true)
-	attack_area.set_deferred("monitorable", true)
+	if attack_area:
+		attack_area.set_deferred("monitoring", true)
+		attack_area.set_deferred("monitorable", true)
 
 
 func command_move(pos: Vector2) -> void:
@@ -338,8 +342,9 @@ func die() -> void:
 	selection_indicator.visible = false
 	hitbox_area.set_deferred("monitoring", false)
 	hitbox_area.set_deferred("monitorable", false)
-	attack_area.set_deferred("monitoring", false)
-	attack_area.set_deferred("monitorable", false)
+	if attack_area:
+		attack_area.set_deferred("monitoring", false)
+		attack_area.set_deferred("monitorable", false)
 
 	if not is_inside_tree():
 		queue_free()
@@ -408,7 +413,7 @@ func _on_attack_area_entered(other_area: Area2D) -> void:
 
 func _on_attack_cooldown_timeout() -> void:
 	can_attack = true
-	if is_dying or is_reviving:
+	if is_dying or is_reviving or not attack_area:
 		return
 	for area in attack_area.get_overlapping_areas():
 		_on_attack_area_entered(area)

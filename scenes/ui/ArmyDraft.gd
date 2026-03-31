@@ -1,6 +1,6 @@
 extends Control
 
-const UNIT_COSTS: Dictionary = {"swordsman": 2, "archer": 2, "priest": 4, "mage": 3}
+const UNIT_COSTS: Dictionary = {"swordsman": 2, "archer": 3, "priest": 5, "mage": 4}
 const UNIT_COLORS: Dictionary = {
 	"swordsman": Color("#FFD700"),
 	"archer": Color("#FFA500"),

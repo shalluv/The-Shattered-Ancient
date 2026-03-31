@@ -1,49 +1,48 @@
-[gd_scene load_steps=4 format=3 uid="uid://b1swordsm00001"]
+[gd_scene load_steps=3 format=3 uid="uid://ctsmwi0ujyvnk"]
 
-[ext_resource type="Script" path="res://scenes/entities/units/UnitBase.gd" id="1_unit"]
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_sword"]
-radius = 13.0
+[ext_resource type="Script" uid="uid://bsqdwrp8pgmbk" path="res://scenes/entities/units/UnitBase.gd" id="1_unit"]
+[ext_resource type="Texture2D" uid="uid://bfiepqx0g5r14" path="res://art/units/swordman/swordman.aseprite" id="2_sprite"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_sword_physics"]
 radius = 5.0
 
-[node name="Swordsman" type="CharacterBody2D"]
-collision_layer = 1
+[sub_resource type="CircleShape2D" id="CircleShape2D_sword"]
+radius = 13.0
+
+[node name="Swordsman" type="CharacterBody2D" unique_id=711451499]
 collision_mask = 10
 script = ExtResource("1_unit")
-unit_type = "swordsman"
-unit_color = Color(1.0, 0.843, 0.0, 1.0)
-max_hp = 1
-damage = 1
+unit_color = Color(1, 0.843, 0, 1)
 
-[node name="PhysicsCollision" type="CollisionShape2D" parent="."]
+[node name="PhysicsCollision" type="CollisionShape2D" parent="." unique_id=971227920]
 shape = SubResource("CircleShape2D_sword_physics")
 
-[node name="SelectionIndicator" type="ColorRect" parent="."]
-mouse_filter = 2
+[node name="SelectionIndicator" type="ColorRect" parent="." unique_id=1327565980]
 visible = false
 offset_left = -6.0
 offset_top = -6.0
 offset_right = 6.0
 offset_bottom = 6.0
-color = Color(1.0, 1.0, 1.0, 0.3)
-
-[node name="UnitVisual" type="ColorRect" parent="."]
-# TODO: Replace with swordsman unit art asset
 mouse_filter = 2
+color = Color(1, 1, 1, 0.3)
+
+[node name="UnitVisual" type="ColorRect" parent="." unique_id=1070440249]
 offset_left = -4.0
 offset_top = -4.0
 offset_right = 4.0
 offset_bottom = 4.0
-color = Color(1.0, 0.843, 0.0, 1.0)
+color = Color(1, 0.843, 0, 1)
 
-[node name="HitboxArea" type="Area2D" parent="."]
-collision_layer = 1
+[node name="Sprite2D" type="Sprite2D" parent="UnitVisual"]
+position = Vector2(4, 4)
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("2_sprite")
+
+[node name="HitboxArea" type="Area2D" parent="." unique_id=2101060645]
 collision_mask = 2
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="HitboxArea"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HitboxArea" unique_id=1372234959]
 shape = SubResource("CircleShape2D_sword")
 
-[node name="DeathParticles" type="GPUParticles2D" parent="."]
+[node name="DeathParticles" type="GPUParticles2D" parent="." unique_id=1656411513]
 emitting = false

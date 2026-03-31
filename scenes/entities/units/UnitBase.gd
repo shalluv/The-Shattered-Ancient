@@ -25,6 +25,7 @@ var is_dying: bool = false
 var is_reviving: bool = false
 var shield_charge: int = 0
 var shield_visual: ColorRect = null
+var unit_sprite: Sprite2D = null
 var damage_multiplier: float = 1.0
 var speed_multiplier: float = 1.0
 var active_slow_zones: int = 0
@@ -45,6 +46,10 @@ var last_pathed_target: Vector2 = Vector2.ZERO
 func _ready() -> void:
 	current_hp = max_hp
 	unit_visual.color = unit_color
+	var sprite_node := unit_visual.get_node_or_null("Sprite2D")
+	if sprite_node is Sprite2D:
+		unit_sprite = sprite_node
+		unit_visual.color = Color(0, 0, 0, 0)
 	if is_reviving:
 		SwarmManager.register_reviving_unit(self)
 	else:
@@ -61,6 +66,8 @@ func _exit_tree() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if unit_sprite and velocity.length_squared() > 1.0:
+		unit_sprite.rotation = velocity.angle() + PI / 2.0
 	if is_dying or is_reviving:
 		return
 
@@ -310,7 +317,10 @@ func die() -> void:
 	if cam and cam.has_method("shake"):
 		cam.shake(3.0, 0.15)
 	var flash_tween := create_tween()
-	flash_tween.tween_property(unit_visual, "color", Color.WHITE, 0.05)
+	if unit_sprite:
+		flash_tween.tween_property(unit_sprite, "modulate", Color(5, 5, 5, 1), 0.05)
+	else:
+		flash_tween.tween_property(unit_visual, "color", Color.WHITE, 0.05)
 	flash_tween.tween_callback(func() -> void:
 		unit_visual.visible = false
 	)

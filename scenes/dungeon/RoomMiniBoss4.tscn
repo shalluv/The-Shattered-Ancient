@@ -1,9 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://b1roommbs00001"]
+[gd_scene format=3 uid="uid://cskmrri1jyvno"]
 
 [ext_resource type="PackedScene" uid="uid://cskmrgh1jyvnk" path="res://scenes/dungeon/RoomBase.tscn" id="1_base"]
-[ext_resource type="Script" path="res://scenes/dungeon/RoomMiniBoss.gd" id="2_script"]
+[ext_resource type="Script" path="res://scenes/dungeon/RoomMiniBoss4.gd" id="2_script"]
 
-[node name="RoomMiniBoss" instance=ExtResource("1_base")]
+[node name="RoomMiniBoss4" instance=ExtResource("1_base")]
 script = ExtResource("2_script")
 room_size = Vector2(1024, 768)
 
@@ -11,16 +11,16 @@ room_size = Vector2(1024, 768)
 position = Vector2(512, 600)
 
 [node name="BossSpawnPoint" type="Marker2D" parent="."]
-position = Vector2(512, 200)
+position = Vector2(512, 180)
 
 [node name="EnemySpawnLeft" type="Marker2D" parent="."]
-position = Vector2(350, 200)
+position = Vector2(300, 250)
 
 [node name="EnemySpawnRight" type="Marker2D" parent="."]
-position = Vector2(674, 200)
+position = Vector2(724, 250)
 
 [node name="EnemySpawnCenter" type="Marker2D" parent="."]
-position = Vector2(512, 350)
+position = Vector2(512, 380)
 
 [node name="VillagerSpawn1" type="Marker2D" parent="."]
 position = Vector2(200, 500)

@@ -36,6 +36,7 @@ var bonus_end_shards: int = 0
 var hero_boons: Dictionary = {}
 var map_data: MapData = null
 var current_node_index: int = 0
+var last_miniboss_scene: String = ""
 
 const COMBAT_SMALL_SCENES: Array[String] = [
 	"res://scenes/dungeon/CombatSmall1.tscn",
@@ -43,6 +44,13 @@ const COMBAT_SMALL_SCENES: Array[String] = [
 	"res://scenes/dungeon/CombatSmall3.tscn",
 	"res://scenes/dungeon/CombatSmall4.tscn",
 	"res://scenes/dungeon/CombatSmall5.tscn",
+]
+
+const MINIBOSS_SCENES: Array[String] = [
+	"res://scenes/dungeon/RoomMiniBoss1.tscn",
+	"res://scenes/dungeon/RoomMiniBoss2.tscn",
+	"res://scenes/dungeon/RoomMiniBoss3.tscn",
+	"res://scenes/dungeon/RoomMiniBoss4.tscn",
 ]
 
 const ROOM_DIFFICULTY: Array[Dictionary] = [
@@ -61,6 +69,18 @@ const ROOM_DIFFICULTY: Array[Dictionary] = [
 
 func get_combat_small_scene() -> String:
 	return COMBAT_SMALL_SCENES[randi() % COMBAT_SMALL_SCENES.size()]
+
+
+func get_miniboss_scene() -> String:
+	var pool: Array[String] = []
+	for scene in MINIBOSS_SCENES:
+		if scene != last_miniboss_scene:
+			pool.append(scene)
+	if pool.is_empty():
+		pool = MINIBOSS_SCENES.duplicate()
+	var picked: String = pool[randi() % pool.size()]
+	last_miniboss_scene = picked
+	return picked
 
 
 func start_run() -> void:
@@ -87,6 +107,7 @@ func start_run() -> void:
 	hero_boons = {}
 	map_data = null
 	current_node_index = 0
+	last_miniboss_scene = ""
 	SwarmManager.reset()
 	generate_new_map()
 
@@ -163,7 +184,7 @@ func get_room_scene_path() -> String:
 			"shop":
 				return "res://scenes/dungeon/RoomShop.tscn"
 			"miniboss":
-				return "res://scenes/dungeon/RoomMiniBoss.tscn"
+				return get_miniboss_scene()
 			"boss":
 				return "res://scenes/dungeon/RoomBoss.tscn"
 			_:

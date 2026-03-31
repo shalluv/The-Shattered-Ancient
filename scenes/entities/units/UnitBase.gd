@@ -3,10 +3,11 @@ extends CharacterBody2D
 const MOVE_LERP_WEIGHT: float = 6.0
 const ARRIVAL_THRESHOLD: float = 3.0
 const WAYPOINT_THRESHOLD: float = 12.0
-const SEPARATION_RADIUS: float = 26.0
+const SEPARATION_RADIUS: float = 18.0
 const SEPARATION_STRENGTH: float = 100.0
 const CONTACT_RAY_LENGTH: float = 18.0
-const PURSUIT_STOP_DISTANCE: float = 25.0
+const PURSUIT_STOP_DISTANCE: float = 18.0
+const MELEE_ATTACK_COOLDOWN: float = 0.5
 
 @export var unit_type: String = "swordsman"
 @export var unit_color: Color = Color("#FFD700")
@@ -17,8 +18,10 @@ const PURSUIT_STOP_DISTANCE: float = 25.0
 
 @onready var unit_visual: ColorRect = $UnitVisual
 @onready var hitbox_area: Area2D = $HitboxArea
+@onready var attack_area: Area2D = $AttackArea
 @onready var death_particles: GPUParticles2D = $DeathParticles
 @onready var selection_indicator: ColorRect = $SelectionIndicator
+@onready var attack_cooldown_timer: Timer = $AttackCooldownTimer
 
 var current_hp: int = 1
 var is_dying: bool = false
@@ -30,6 +33,7 @@ var damage_multiplier: float = 1.0
 var speed_multiplier: float = 1.0
 var active_slow_zones: int = 0
 var _current_slow_value: float = 1.0
+var can_attack: bool = true
 var target_position: Vector2 = Vector2.ZERO
 var has_move_target: bool = false
 var is_selected: bool = false
@@ -51,6 +55,10 @@ func _ready() -> void:
 		unit_visual.color = Color(0, 0, 0, 0)
 	else:
 		unit_visual.color = unit_color
+	attack_area.area_entered.connect(_on_attack_area_entered)
+	attack_cooldown_timer.wait_time = MELEE_ATTACK_COOLDOWN
+	attack_cooldown_timer.one_shot = true
+	attack_cooldown_timer.timeout.connect(_on_attack_cooldown_timeout)
 	if is_reviving:
 		SwarmManager.register_reviving_unit(self)
 	else:
@@ -208,6 +216,8 @@ func finish_revival() -> void:
 	SwarmManager.register_unit(self)
 	hitbox_area.set_deferred("monitoring", true)
 	hitbox_area.set_deferred("monitorable", true)
+	attack_area.set_deferred("monitoring", true)
+	attack_area.set_deferred("monitorable", true)
 
 
 func command_move(pos: Vector2) -> void:
@@ -328,6 +338,8 @@ func die() -> void:
 	selection_indicator.visible = false
 	hitbox_area.set_deferred("monitoring", false)
 	hitbox_area.set_deferred("monitorable", false)
+	attack_area.set_deferred("monitoring", false)
+	attack_area.set_deferred("monitorable", false)
 
 	if not is_inside_tree():
 		queue_free()
@@ -377,6 +389,30 @@ func remove_slow() -> void:
 
 func apply_damage_tick(amount: float) -> void:
 	take_damage(int(max(1, amount)))
+
+
+func _on_attack_area_entered(other_area: Area2D) -> void:
+	if not can_attack or is_dying or is_reviving:
+		return
+	var enemy := other_area.get_parent()
+	if not enemy.is_in_group("enemies"):
+		return
+	if not enemy.has_method("take_hit"):
+		return
+	if "last_attacker" in enemy:
+		enemy.last_attacker = self
+	enemy.take_hit(get_effective_damage())
+	can_attack = false
+	attack_cooldown_timer.start()
+
+
+func _on_attack_cooldown_timeout() -> void:
+	can_attack = true
+	if is_dying or is_reviving:
+		return
+	for area in attack_area.get_overlapping_areas():
+		_on_attack_area_entered(area)
+		break
 
 
 func _setup_death_particles() -> void:

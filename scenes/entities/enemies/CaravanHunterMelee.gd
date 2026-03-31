@@ -30,22 +30,6 @@ func _find_caravan() -> void:
 		caravan_target = caravans[0]
 
 
-func _on_hitbox_area_entered(other_area: Area2D) -> void:
-	# CaravanHunter only receives damage, doesn't deal melee damage
-	if not can_deal_damage or is_dying:
-		return
-	
-	var unit := other_area.get_parent()
-	if unit.has_method("take_damage"):
-		# Only take damage, don't deal damage back
-		var hit_damage: int = 1
-		if unit.has_method("get_effective_damage"):
-			hit_damage = unit.get_effective_damage()
-		take_hit(hit_damage)
-		# Don't set can_deal_damage = false (no melee cooldown)
-		# Don't deal damage back to unit
-
-
 func _physics_process(delta: float) -> void:
 	if is_dying:
 		return

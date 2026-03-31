@@ -252,13 +252,7 @@ func _on_hitbox_area_entered(other_area: Area2D) -> void:
 		return
 	var unit := other_area.get_parent()
 	if unit.has_method("take_damage"):
-		if unit.has_method("get_unit_type"):
-			pass
 		unit.take_damage(melee_damage)
-		var hit_damage: int = 1
-		if unit.has_method("get_effective_damage"):
-			hit_damage = unit.get_effective_damage()
-		take_hit(hit_damage)
 		can_deal_damage = false
 		damage_cooldown_timer.start()
 

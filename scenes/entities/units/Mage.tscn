@@ -6,6 +6,9 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_mage"]
 radius = 13.0
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_mage_attack"]
+radius = 20.0
+
 [sub_resource type="CircleShape2D" id="CircleShape2D_mage_physics"]
 radius = 5.0
 
@@ -50,6 +53,17 @@ collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="HitboxArea"]
 shape = SubResource("CircleShape2D_mage")
+
+[node name="AttackArea" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea"]
+shape = SubResource("CircleShape2D_mage_attack")
+
+[node name="AttackCooldownTimer" type="Timer" parent="."]
+wait_time = 0.5
+one_shot = true
 
 [node name="DeathParticles" type="GPUParticles2D" parent="."]
 emitting = false

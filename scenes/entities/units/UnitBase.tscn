@@ -8,6 +8,9 @@ radius = 5.0
 [sub_resource type="CircleShape2D" id="CircleShape2D_unit"]
 radius = 13.0
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_unit_attack"]
+radius = 20.0
+
 [node name="UnitBase" type="CharacterBody2D" unique_id=1413567722]
 collision_mask = 10
 script = ExtResource("1_unit")
@@ -36,6 +39,17 @@ collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="HitboxArea" unique_id=1111871460]
 shape = SubResource("CircleShape2D_unit")
+
+[node name="AttackArea" type="Area2D" parent="." unique_id=918273645]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea" unique_id=918273646]
+shape = SubResource("CircleShape2D_unit_attack")
+
+[node name="AttackCooldownTimer" type="Timer" parent="." unique_id=918273647]
+wait_time = 0.5
+one_shot = true
 
 [node name="DeathParticles" type="GPUParticles2D" parent="." unique_id=717412256]
 emitting = false

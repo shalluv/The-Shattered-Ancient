@@ -13,7 +13,6 @@ var formation_offset: Vector2 = Vector2.ZERO
 var target_position: Vector2 = Vector2.ZERO
 var is_attached: bool = true
 var facing_direction: Vector2 = Vector2.RIGHT
-var last_hit_by: Node2D = null
 var front_indicator: Polygon2D = null
 var deflect_particles: GPUParticles2D = null
 
@@ -76,28 +75,23 @@ func _physics_process(delta: float) -> void:
 			front_indicator.rotation = facing_direction.angle()
 
 
-func _on_hitbox_area_entered(other_area: Area2D) -> void:
-	last_hit_by = other_area.get_parent()
-	super._on_hitbox_area_entered(other_area)
-
-
 func take_hit(amount: int) -> void:
-	if is_instance_valid(last_hit_by) and facing_direction.length() > 0.1:
-		var dir_to_attacker := global_position.direction_to(last_hit_by.global_position)
+	if is_instance_valid(last_attacker) and facing_direction.length() > 0.1:
+		var dir_to_attacker := global_position.direction_to(last_attacker.global_position)
 		var dot := facing_direction.dot(dir_to_attacker)
 		if dot > FRONT_ARC_THRESHOLD:
 			var reflected_amount := int(ceil(float(amount) * REFLECT_FRACTION))
-			if last_hit_by.has_method("take_damage"):
-				last_hit_by.take_damage(reflected_amount)
+			if last_attacker.has_method("take_damage"):
+				last_attacker.take_damage(reflected_amount)
 			deflect_particles.emitting = true
 			if is_instance_valid(group) and group.has_signal("attack_reflected"):
-				group.attack_reflected.emit(last_hit_by)
+				group.attack_reflected.emit(last_attacker)
 			var reduced := maxi(amount - reflected_amount, 1)
 			super.take_hit(reduced)
-			last_hit_by = null
+			last_attacker = null
 			return
 
-	last_hit_by = null
+	last_attacker = null
 	super.take_hit(amount)
 
 

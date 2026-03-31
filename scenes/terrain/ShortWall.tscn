@@ -5,3 +5,4 @@
 [node name="ShortWall" type="Node2D"]
 script = ExtResource("1_script")
 wall_size = Vector2(80, 30)
+blocks_line_of_sight = false

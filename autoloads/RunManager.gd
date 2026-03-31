@@ -45,6 +45,13 @@ const COMBAT_SMALL_SCENES: Array[String] = [
 	"res://scenes/dungeon/CombatSmall5.tscn",
 ]
 
+const MINIBOSS_SCENES: Array[String] = [
+	"res://scenes/dungeon/RoomMiniBoss1.tscn",
+	"res://scenes/dungeon/RoomMiniBoss2.tscn",
+	"res://scenes/dungeon/RoomMiniBoss3.tscn",
+	"res://scenes/dungeon/RoomMiniBoss4.tscn",
+]
+
 const ROOM_DIFFICULTY: Array[Dictionary] = [
 	{"enemy_count": 5, "enemy_hp": 1, "enemy_damage": 1},
 	{"enemy_count": 5, "enemy_hp": 1, "enemy_damage": 1},
@@ -61,6 +68,10 @@ const ROOM_DIFFICULTY: Array[Dictionary] = [
 
 func get_combat_small_scene() -> String:
 	return COMBAT_SMALL_SCENES[randi() % COMBAT_SMALL_SCENES.size()]
+
+
+func get_miniboss_scene() -> String:
+	return MINIBOSS_SCENES[randi() % MINIBOSS_SCENES.size()]
 
 
 func start_run() -> void:
@@ -163,7 +174,7 @@ func get_room_scene_path() -> String:
 			"shop":
 				return "res://scenes/dungeon/RoomShop.tscn"
 			"miniboss":
-				return "res://scenes/dungeon/RoomMiniBoss.tscn"
+				return get_miniboss_scene()
 			"boss":
 				return "res://scenes/dungeon/RoomBoss.tscn"
 			_:

@@ -23,6 +23,8 @@ func _on_room_cleared() -> void:
 func _on_captain_defeated() -> void:
 	captain_defeated_flag = true
 	RunManager.award_room_shards(false)
+	if RunManager.enemies_remaining <= 0:
+		_show_reward()
 
 
 func _show_reward() -> void:

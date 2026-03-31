@@ -53,6 +53,12 @@ const MINIBOSS_SCENES: Array[String] = [
 	"res://scenes/dungeon/RoomMiniBoss4.tscn",
 ]
 
+const BOSS_SCENES: Array[String] = [
+	"res://scenes/dungeon/RoomBoss1.tscn",
+	"res://scenes/dungeon/RoomBoss2.tscn",
+	"res://scenes/dungeon/RoomBoss3.tscn",
+]
+
 const ROOM_DIFFICULTY: Array[Dictionary] = [
 	{"enemy_count": 5, "enemy_hp": 1, "enemy_damage": 1},
 	{"enemy_count": 5, "enemy_hp": 1, "enemy_damage": 1},
@@ -81,6 +87,10 @@ func get_miniboss_scene() -> String:
 	var picked: String = pool[randi() % pool.size()]
 	last_miniboss_scene = picked
 	return picked
+
+
+func get_boss_scene() -> String:
+	return BOSS_SCENES[randi() % BOSS_SCENES.size()]
 
 
 func start_run() -> void:
@@ -172,7 +182,7 @@ func add_enemies(count: int) -> void:
 
 func get_room_scene_path() -> String:
 	if current_room_index == BOSS_ROOM_INDEX:
-		return "res://scenes/dungeon/RoomBoss.tscn"
+		return get_boss_scene()
 
 	if not chosen_room_data.is_empty():
 		var room_type: String = chosen_room_data.get("type", "combat")

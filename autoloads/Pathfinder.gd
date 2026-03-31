@@ -3,7 +3,7 @@ extends Node
 const CELL_SIZE: int = 16
 const SHORT_DISTANCE_THRESHOLD: float = 8.0
 const MAX_SPIRAL_SEARCH: int = 3
-const DAMAGE_ZONE_WEIGHT: float = 8.0
+const DAMAGE_ZONE_WEIGHT: float = 100.0
 const LOS_PADDING: int = 1
 
 var astar: AStarGrid2D = AStarGrid2D.new()

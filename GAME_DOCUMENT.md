@@ -165,10 +165,33 @@ Each run generates a **10-row procedural map**:
 |------|-------------|
 | Combat (Small) | 5 randomized combat variations |
 | Combat (Medium) | Larger battles, may include villages with neutrals |
+| Village | Special encounters where you rescue neutral villagers |
 | Miniboss | Stronger enemy encounters with rewards |
 | Hero Encounter | Fight a hero boss, choose a boon |
 | Shop | Spend gold on buffs |
 | Boss | Final Dire Ancient fight |
+
+### Village Room Types
+Village rooms scale with difficulty based on your row position:
+
+| Variant | Mechanic | Early (Rows 1-2) | Mid (Rows 3-5) | Late (Rows 6+) |
+|---------|----------|------------------|----------------|----------------|
+| **Divided** | Central damage zone splits map | 0 priests, 5 guards (5 total) | 1 priest, 7 guards (8 total) | 2 priests, 9 guards (11 total) |
+| **Contested** | Priests compete for villagers | 1 priest, 4 guards, 2 grunts (7 total) | 2 priests, 4 guards, 2 grunts (8 total) | 3 priests, 4 guards, 2 grunts (9 total) |
+| **Gauntlet** | Layered defense protecting villagers | 0 priests, 2 grunts, 6 guards (8 total) | 1 priest, 2 grunts, 7 guards (10 total) | 2 priests, 2 grunts, 9 guards (13 total) |
+| **Sacrifice** | Timed rescue from altars | 30s timer, 6 guards, 2 ranged (8 total) | 25s timer, 8 guards, 2 ranged (10 total) | 22s timer, 10 guards, 2 ranged (12 total) |
+| **Caravan** | Escort moving caravan | Continuous spawn (normal rate) | Continuous spawn (15% faster) | Continuous spawn (30% faster) |
+
+**Difficulty Scaling:**
+- **Early:** Base difficulty, good for learning village mechanics
+- **Mid:** +2 extra enemies, +1 priest (Divided/Gauntlet: 0→1, Contested: 1→2), faster timers/spawns
+- **Late:** +4 extra enemies, +2 priests (Divided/Gauntlet: 0→2, Contested: 1→3), significantly faster timers/spawns
+
+**Priest Progression by Variant:**
+- **Divided:** 0 → 1 → 2 priests
+- **Contested:** 1 → 2 → 3 priests  
+- **Gauntlet:** 0 → 1 → 2 priests
+- **Sacrifice/Caravan:** No priests (focus on timer/spawn rate scaling)
 
 Between rooms, you choose your path on the map screen — different branches offer different room types.
 

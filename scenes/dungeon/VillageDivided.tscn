@@ -1,0 +1,41 @@
+[gd_scene load_steps=3 format=3 uid="uid://village_divided_001"]
+
+[ext_resource type="PackedScene" uid="uid://cskmrgh1jyvnk" path="res://scenes/dungeon/RoomBase.tscn" id="1_base"]
+[ext_resource type="Script" path="res://scenes/dungeon/VillageDivided.gd" id="2_script"]
+
+[node name="VillageDivided" instance=ExtResource("1_base")]
+script = ExtResource("2_script")
+room_size = Vector2(1024, 768)
+
+[node name="PlayerSpawnPoint" type="Marker2D" parent="."]
+position = Vector2(512, 700)
+
+[node name="EnemySpawnTop1" type="Marker2D" parent="."]
+position = Vector2(150, 200)
+
+[node name="EnemySpawnTop2" type="Marker2D" parent="."]
+position = Vector2(512, 180)
+
+[node name="EnemySpawnTop3" type="Marker2D" parent="."]
+position = Vector2(874, 200)
+
+[node name="EnemySpawnBottom1" type="Marker2D" parent="."]
+position = Vector2(150, 500)
+
+[node name="EnemySpawnBottom2" type="Marker2D" parent="."]
+position = Vector2(874, 500)
+
+[node name="VillagerSpawnTop1" type="Marker2D" parent="."]
+position = Vector2(200, 120)
+
+[node name="VillagerSpawnTop2" type="Marker2D" parent="."]
+position = Vector2(512, 120)
+
+[node name="VillagerSpawnTop3" type="Marker2D" parent="."]
+position = Vector2(824, 120)
+
+[node name="VillagerSpawnBottom1" type="Marker2D" parent="."]
+position = Vector2(200, 550)
+
+[node name="VillagerSpawnBottom2" type="Marker2D" parent="."]
+position = Vector2(824, 550)

@@ -25,6 +25,7 @@ func _ready() -> void:
 	_create_zone_particles()
 
 	if zone_type == ZoneType.DAMAGE:
+		add_to_group("damage_zones")
 		_damage_timer = Timer.new()
 		_damage_timer.wait_time = DAMAGE_TICK_INTERVAL
 		_damage_timer.one_shot = false

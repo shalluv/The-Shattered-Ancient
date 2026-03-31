@@ -1,0 +1,59 @@
+[gd_scene load_steps=3 format=3 uid="uid://village_contested_001"]
+
+[ext_resource type="PackedScene" uid="uid://cskmrgh1jyvnk" path="res://scenes/dungeon/RoomBase.tscn" id="1_base"]
+[ext_resource type="Script" path="res://scenes/dungeon/VillageContested.gd" id="2_script"]
+
+[node name="VillageContested" instance=ExtResource("1_base")]
+script = ExtResource("2_script")
+room_size = Vector2(1024, 768)
+
+[node name="PlayerSpawnPoint" type="Marker2D" parent="."]
+position = Vector2(512, 700)
+
+[node name="DirePriestSpawn1" type="Marker2D" parent="."]
+position = Vector2(200, 150)
+
+[node name="DirePriestSpawn2" type="Marker2D" parent="."]
+position = Vector2(824, 150)
+
+[node name="GuardSpawn1" type="Marker2D" parent="."]
+position = Vector2(280, 200)
+
+[node name="GuardSpawn2" type="Marker2D" parent="."]
+position = Vector2(744, 200)
+
+[node name="GuardSpawn3" type="Marker2D" parent="."]
+position = Vector2(350, 400)
+
+[node name="GuardSpawn4" type="Marker2D" parent="."]
+position = Vector2(674, 400)
+
+[node name="AggressiveSpawn1" type="Marker2D" parent="."]
+position = Vector2(400, 550)
+
+[node name="AggressiveSpawn2" type="Marker2D" parent="."]
+position = Vector2(624, 550)
+
+[node name="VillagerLeft1" type="Marker2D" parent="."]
+position = Vector2(150, 250)
+
+[node name="VillagerLeft2" type="Marker2D" parent="."]
+position = Vector2(250, 250)
+
+[node name="VillagerLeft3" type="Marker2D" parent="."]
+position = Vector2(150, 350)
+
+[node name="VillagerLeft4" type="Marker2D" parent="."]
+position = Vector2(250, 350)
+
+[node name="VillagerRight1" type="Marker2D" parent="."]
+position = Vector2(774, 250)
+
+[node name="VillagerRight2" type="Marker2D" parent="."]
+position = Vector2(874, 250)
+
+[node name="VillagerRight3" type="Marker2D" parent="."]
+position = Vector2(774, 350)
+
+[node name="VillagerRight4" type="Marker2D" parent="."]
+position = Vector2(874, 350)

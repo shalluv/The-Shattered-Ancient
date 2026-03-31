@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://dire_grunt_ranged_001"]
+
+[ext_resource type="PackedScene" uid="uid://cfjcr4i1jyvnk" path="res://scenes/entities/enemies/EnemyBase.tscn" id="1_base"]
+[ext_resource type="Script" path="res://scenes/entities/enemies/DireGruntRanged.gd" id="2_script"]
+
+[node name="DireGruntRanged" instance=ExtResource("1_base")]
+script = ExtResource("2_script")
+
+[node name="EnemyVisual" parent="." index="1"]
+color = Color(0.42, 0.165, 0.165, 1)

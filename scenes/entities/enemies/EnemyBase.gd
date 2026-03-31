@@ -332,11 +332,16 @@ func _play_revival_effect(unit: CharacterBody2D) -> void:
 		if not is_instance_valid(unit):
 			return
 		unit.finish_revival()
-		var unit_visual_node: ColorRect = unit.get_node("UnitVisual")
-		if unit_visual_node:
+		if unit.unit_sprite:
 			var flash := unit.create_tween()
-			flash.tween_property(unit_visual_node, "color", Color.WHITE, 0.1)
-			flash.tween_property(unit_visual_node, "color", unit.unit_color, 0.1)
+			flash.tween_property(unit.unit_sprite, "modulate", Color(5, 5, 5, 1), 0.1)
+			flash.tween_property(unit.unit_sprite, "modulate", Color.WHITE, 0.1)
+		else:
+			var unit_visual_node: ColorRect = unit.get_node("UnitVisual")
+			if unit_visual_node:
+				var flash := unit.create_tween()
+				flash.tween_property(unit_visual_node, "color", Color.WHITE, 0.1)
+				flash.tween_property(unit_visual_node, "color", unit.unit_color, 0.1)
 		if is_instance_valid(revival_particles):
 			revival_particles.emitting = false
 			var cleanup_tween := unit.create_tween()

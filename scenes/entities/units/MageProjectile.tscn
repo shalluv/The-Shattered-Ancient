@@ -1,6 +1,7 @@
-[gd_scene format=3 uid="uid://cm5euwvrjyvnk"]
+[gd_scene load_steps=3 format=3 uid="uid://cm5euwvrjyvnk"]
 
 [ext_resource type="Script" path="res://scenes/entities/units/MageProjectile.gd" id="1_magproj"]
+[ext_resource type="Texture2D" uid="uid://d263v00o8a032" path="res://art/projectiles/magic/magic.aseprite" id="2_sprite"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_magproj"]
 radius = 3.0
@@ -11,13 +12,17 @@ collision_mask = 0
 script = ExtResource("1_magproj")
 
 [node name="ProjectileVisual" type="ColorRect" parent="."]
-# TODO: Replace with magic projectile art asset
 mouse_filter = 2
 offset_left = -3.0
 offset_top = -3.0
 offset_right = 3.0
 offset_bottom = 3.0
-color = Color(0.878, 1.0, 1.0, 1.0)
+color = Color(0.878, 1.0, 1.0, 0.0)
+
+[node name="Sprite2D" type="Sprite2D" parent="ProjectileVisual"]
+position = Vector2(3, 3)
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("2_sprite")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_magproj")

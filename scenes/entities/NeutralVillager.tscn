@@ -1,6 +1,7 @@
-[gd_scene format=3 uid="uid://cwejqfnmbyvnk"]
+[gd_scene load_steps=3 format=3 uid="uid://cwejqfnmbyvnk"]
 
 [ext_resource type="Script" path="res://scenes/entities/NeutralVillager.gd" id="1_villager"]
+[ext_resource type="Texture2D" uid="uid://c1jh4i0ktcx77" path="res://art/units/villager/villager.aseprite" id="2_sprite"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_villager"]
 radius = 5.0
@@ -14,13 +15,17 @@ script = ExtResource("1_villager")
 shape = SubResource("CircleShape2D_villager")
 
 [node name="VillagerVisual" type="ColorRect" parent="."]
-# TODO: Replace with villager character art asset
 mouse_filter = 2
 offset_left = -4.0
 offset_top = -4.0
 offset_right = 4.0
 offset_bottom = 4.0
-color = Color(0.502, 0.502, 0.502, 1.0)
+color = Color(0.502, 0.502, 0.502, 0.0)
+
+[node name="Sprite2D" type="Sprite2D" parent="VillagerVisual"]
+position = Vector2(4, 4)
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("2_sprite")
 
 [node name="DeathParticles" type="GPUParticles2D" parent="."]
 emitting = false

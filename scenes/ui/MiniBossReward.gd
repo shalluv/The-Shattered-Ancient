@@ -3,6 +3,7 @@ extends Control
 signal reward_chosen
 
 var entities_node: Node2D = null
+var has_chosen: bool = false
 
 
 func _style_button(button: Button) -> void:
@@ -115,6 +116,9 @@ func _ready() -> void:
 
 
 func _on_units_chosen(unit_type: String) -> void:
+	if has_chosen:
+		return
+	has_chosen = true
 	if entities_node and is_instance_valid(entities_node):
 		var scene_path: String = SwarmManager.get_unit_scene_path(unit_type)
 		var unit_scene: PackedScene = load(scene_path)
@@ -128,6 +132,9 @@ func _on_units_chosen(unit_type: String) -> void:
 
 
 func _on_gold_chosen() -> void:
+	if has_chosen:
+		return
+	has_chosen = true
 	RunManager.add_gold(20)
 	_finish()
 

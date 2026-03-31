@@ -6,6 +6,7 @@ var DireCaptainScene := preload("res://scenes/entities/enemies/DireCaptain.tscn"
 var MiniBossRewardScene := preload("res://scenes/ui/MiniBossReward.tscn")
 
 var captain_instance: CharacterBody2D = null
+var captain_defeated_flag: bool = false
 
 
 func _ready() -> void:
@@ -15,12 +16,16 @@ func _ready() -> void:
 
 
 func _on_room_cleared() -> void:
-	pass
+	if captain_defeated_flag:
+		_show_reward()
 
 
 func _on_captain_defeated() -> void:
+	captain_defeated_flag = true
 	RunManager.award_room_shards(false)
 
+
+func _show_reward() -> void:
 	var reward := MiniBossRewardScene.instantiate()
 	reward.entities_node = entities
 	reward.reward_chosen.connect(_on_reward_chosen)

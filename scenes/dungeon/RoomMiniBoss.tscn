@@ -18,3 +18,15 @@ position = Vector2(350, 200)
 
 [node name="EnemySpawnRight" type="Marker2D" parent="."]
 position = Vector2(674, 200)
+
+[node name="EnemySpawnCenter" type="Marker2D" parent="."]
+position = Vector2(512, 350)
+
+[node name="VillagerSpawn1" type="Marker2D" parent="."]
+position = Vector2(200, 500)
+
+[node name="VillagerSpawn2" type="Marker2D" parent="."]
+position = Vector2(512, 520)
+
+[node name="VillagerSpawn3" type="Marker2D" parent="."]
+position = Vector2(824, 500)

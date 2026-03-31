@@ -1,7 +1,7 @@
 extends "res://scenes/entities/units/UnitBase.gd"
 
 const ATTACK_RANGE: float = 140.0
-const ATTACK_COOLDOWN: float = 2.5
+const ATTACK_COOLDOWN: float = 4.0
 const BASE_AOE_RADIUS: float = 60.0
 
 var aoe_radius: float = BASE_AOE_RADIUS

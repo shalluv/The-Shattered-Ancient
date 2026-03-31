@@ -14,7 +14,7 @@ var aura_glitter: GPUParticles2D = null
 
 func _ready() -> void:
 	enemy_hp = 3
-	move_speed = 30.0
+	move_speed = 15.0
 	damage = 0
 	enemy_color = PRIEST_COLOR
 	super._ready()

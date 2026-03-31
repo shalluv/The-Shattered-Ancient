@@ -4,7 +4,7 @@ signal captain_defeated
 
 const CAPTAIN_HP: int = 12
 const ENRAGE_HP: int = 6
-const ATTACK_COOLDOWN: float = 1.2
+const ATTACK_COOLDOWN: float = 2.4
 const ENRAGE_SPEED_MULT: float = 1.5
 const ENRAGE_ATTACK_MULT: float = 1.5
 const CAPTAIN_GOLD_DROP: int = 15

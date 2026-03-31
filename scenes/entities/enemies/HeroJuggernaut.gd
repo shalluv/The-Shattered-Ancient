@@ -4,7 +4,7 @@ const BLADEFURY_WINDUP: float = 0.5
 const BLADEFURY_DURATION: float = 2.0
 const BLADEFURY_RADIUS: float = 40.0
 const BLADEFURY_DPS: float = 10.0
-const ENRAGED_SPEED: float = 220.0
+const ENRAGED_SPEED: float = 110.0
 
 var is_spinning: bool = false
 var spin_timer: float = 0.0
@@ -15,9 +15,9 @@ func _ready() -> void:
 	hero_id = "juggernaut"
 	hero_hp = 30
 	hero_max_hp = 30
-	move_speed = 120.0
+	move_speed = 60.0
 	melee_damage = 15
-	attack_cooldown = 1.0
+	attack_cooldown = 2.0
 	ability_cooldown = 8.0
 	threshold_percent = 0.3
 	super()

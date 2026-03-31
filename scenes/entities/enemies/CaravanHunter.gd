@@ -1,13 +1,13 @@
 extends "res://scenes/entities/enemies/EnemyBase.gd"
 
 const HUNTER_COLOR: Color = Color("#4a2a1a")
-const HUNTER_SPEED: float = 100.0
+const HUNTER_SPEED: float = 50.0
 const HUNTER_HP: int = 2
 const HUNTER_DAMAGE: int = 1
-const HUNTER_ATTACK_COOLDOWN: float = 1.0
+const HUNTER_ATTACK_COOLDOWN: float = 2.0
 const HUNTER_PATH_RECALC: float = 0.3
 const RANGED_ATTACK_RANGE: float = 120.0
-const PROJECTILE_SPEED: float = 180.0
+const PROJECTILE_SPEED: float = 90.0
 
 var attack_timer: float = 0.0
 var caravan_target: Node2D = null

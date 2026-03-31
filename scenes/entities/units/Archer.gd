@@ -1,7 +1,7 @@
 extends "res://scenes/entities/units/UnitBase.gd"
 
-const ATTACK_RANGE: float = 180.0
-var attack_cooldown: float = 1.5
+const ATTACK_RANGE: float = 170.0
+var attack_cooldown: float = 2.8
 
 var ProjectileScene := preload("res://scenes/entities/units/Projectile.tscn")
 var attack_timer: float = 0.0

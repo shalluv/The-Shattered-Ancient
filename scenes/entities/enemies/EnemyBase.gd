@@ -1,7 +1,7 @@
 extends CharacterBody2D
 
 @export var enemy_hp: int = 3
-@export var move_speed: float = 40.0
+@export var move_speed: float = 20.0
 @export var damage: int = 1
 @export var enemy_color: Color = Color("#8B0000")
 

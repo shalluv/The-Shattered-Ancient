@@ -1,6 +1,6 @@
 extends Area2D
 
-const PROJECTILE_SPEED: float = 250.0
+const PROJECTILE_SPEED: float = 125.0
 const MAX_DISTANCE: float = 200.0
 const PROJECTILE_DAMAGE: int = 1
 

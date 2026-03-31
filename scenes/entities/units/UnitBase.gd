@@ -12,7 +12,7 @@ const PURSUIT_STOP_DISTANCE: float = 25.0
 @export var unit_color: Color = Color("#FFD700")
 @export var max_hp: int = 1
 @export var damage: int = 1
-@export var move_speed: float = 100.0
+@export var move_speed: float = 60.0
 @export var pursuit_range: float = 75.0
 
 @onready var unit_visual: ColorRect = $UnitVisual

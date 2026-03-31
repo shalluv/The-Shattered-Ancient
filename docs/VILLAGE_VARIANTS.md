@@ -15,11 +15,13 @@ A village split by a central damage zone (lava). Players must navigate around ha
 - **Damage Zone**: Central horizontal lava strip
 - **Buildings**: Scattered throughout safe zones
 
-### Enemies
-- **DirePriest** x1 (converts villagers, conversion aura)
-- **StationaryGuard** x5 (melee, patrol behavior)
-- Guards patrol in 40px radius around spawn point
-- Aggro radius: 100px
+### Enemies (Difficulty Scaling)
+- **Early (Rows 1-2):** 0 priests, 5 guards (5 total)
+- **Mid (Rows 3-5):** 1 priest, 7 guards (8 total)  
+- **Late (Rows 6+):** 2 priests, 9 guards (11 total)
+- **DirePriest:** Converts villagers, conversion aura
+- **StationaryGuard:** Melee, patrol 40px radius, 100px aggro
+- **Extra Guards:** Spawn at random positions for higher difficulty
 
 ### Villagers
 - **Top Section**: 2 villagers (mix of Neutral/Archer/Mage)
@@ -40,10 +42,14 @@ DirePriests are actively converting villagers. Players must eliminate priests be
 - **Slow Zone**: Central area
 - **Buildings**: Strategic cover positions
 
-### Enemies
-- **DirePriest** x3 (converts villagers, conversion aura)
-- **StationaryGuard** x4 (melee, patrol near priests/chokepoints)
-- **DireGrunt** x2 (aggressive)
+### Enemies (Difficulty Scaling)
+- **Early (Rows 1-2):** 1 priest, 4 guards, 2 grunts (7 total)
+- **Mid (Rows 3-5):** 2 priests, 4 guards, 2 grunts (8 total)
+- **Late (Rows 6+):** 3 priests, 4 guards, 2 grunts (9 total)
+- **DirePriest:** Converts villagers, conversion aura (spawns above water zone)
+- **StationaryGuard:** Melee, patrol near priests/chokepoints
+- **DireGrunt:** Aggressive, chases player units
+- **Priest Positions:** Center (512,250) + (350,250)/(674,250) for extra priests
 
 ### Villagers
 - **Left side**: 4 villagers (1 Archer, 3 Neutral)
@@ -72,13 +78,15 @@ A layered defense with enemies in three tiers. Villagers are protected in a safe
 - **Layer 3**: Final defense before villager zone
 - **Safe Zone**: Top area with villagers
 
-### Enemies
-- **Layer 1**: DireGrunts x2
-- **Layer 2**: StationaryGuards x2
-- **Layer 3**: StationaryGuards x2
-- **Entrance Guards**: StationaryGuards x2
-- **Center**: DirePriest x1 (converts villagers)
-- **Total**: 9 enemies
+### Enemies (Difficulty Scaling)
+- **Early (Rows 1-2):** 0 priests, 2 grunts, 6 guards (8 total)
+- **Mid (Rows 3-5):** 1 priest, 2 grunts, 7 guards (10 total)
+- **Late (Rows 6+):** 2 priests, 2 grunts, 9 guards (13 total)
+- **Layer 1:** DireGrunts x2 (bottom layer)
+- **Layer 2:** StationaryGuards x2 (middle layer)
+- **Layer 3:** StationaryGuards x2 (upper layer)
+- **Entrance Guards:** StationaryGuards x2 (villager entrance)
+- **Priest Positions:** (512,200) for first, (350,250)/(674,250) for extra (above damage zone)
 
 ### Villagers
 - 6 villagers in safe zone (Mage, Priest, 2 Archers, 2 Neutrals)
@@ -104,20 +112,27 @@ Escort a moving caravan carrying villagers to safety. Enemies specifically targe
 - **Buildings**: Along the route for cover
 - **Spawn Zones**: 4 designated areas (not near start/end)
 
-### Enemy System
+### Enemy System (Difficulty Scaling)
 **Continuous Spawns** with random offsets:
-- **CaravanHunterMelee**: Every 15s (+0-2s delay) - Targets caravan only
-- **CaravanHunterRanged**: Every 25s (+0-3s delay) - Targets caravan only  
-- **DireGrunt (Melee)**: Every 14s (+0-2.5s delay) - Targets player units
-- **DireGruntRanged**: Every 30s (+0-4s delay) - Targets player units
+- **CaravanHunterMelee**: Every 15s → 12.75s (Mid) → 10.5s (Late) (+0-2s delay)
+- **CaravanHunterRanged**: Every 25s → 21.25s (Mid) → 17.5s (Late) (+0-3s delay)  
+- **DireGrunt (Melee)**: Every 14s → 11.9s (Mid) → 9.8s (Late) (+0-2.5s delay)
+- **DireGruntRanged**: Every 30s → 25.5s (Mid) → 21s (Late) (+0-4s delay)
+- **Spawn Rate Multiplier:** 1.0x → 0.85x (Mid) → 0.7x (Late)
 
 ### Enemy Types
-| Type | HP | Speed | Target | Special |
-|------|----|-------|--------|---------|
-| CaravanHunterMelee | 2 | 85 | Caravan | Melee only |
-| CaravanHunterRanged | 1 | 40 | Caravan | Ranged attack |
-| DireGrunt (Melee) | 1 | 40 | Player | Standard melee |
-| DireGruntRanged | 1 | 40 | Player | Ranged attack |
+| Type | HP | Speed | Target | Special | Behavior |
+|------|----|-------|--------|---------|----------|
+| CaravanHunterMelee | 2 | 85 | Caravan | Melee only | Receives damage, doesn't deal melee damage |
+| CaravanHunterRanged | 2 | 100 | Caravan | Ranged attack | Receives damage, doesn't deal melee damage |
+| DireGrunt (Melee) | 1 | 40 | Player | Standard melee | Normal combat |
+| DireGruntRanged | 1 | 40 | Player | Ranged attack | Normal combat |
+
+### CaravanHunter Mechanics
+- **Collision Layer:** 2 (enemies) with proper HitboxArea setup
+- **Damage System:** Receives damage from player units, but only attacks caravan
+- **No Melee Damage:** Override `_on_hitbox_area_entered()` to prevent player damage
+- **Target Priority:** Always targets caravan, ignores player units for combat
 
 ### Caravan Mechanics
 - **Villagers Onboard**: 6 villagers
@@ -158,10 +173,14 @@ Villagers are bound to altars with sacrifice timers. Players must defeat guards 
 - **Altar 3**: Right (774, 400)
 - **Damage Zone**: Center-bottom area (512, 480)
 
-### Enemies
-- **Per Altar**: 1 StationaryGuard (melee) + 1 RangedGuard (ranged)
-- **Aggressive**: DireGrunts x2 (initial wave)
-- **Total**: 8 enemies
+### Enemies (Difficulty Scaling)
+- **Early (Rows 1-2):** 6 guards, 2 ranged (8 total) + 30s timer
+- **Mid (Rows 3-5):** 8 guards, 2 ranged (10 total) + 25s timer
+- **Late (Rows 6+):** 10 guards, 2 ranged (12 total) + 22s timer
+- **Per Altar:** 1 StationaryGuard (melee) + 1 RangedGuard (ranged)
+- **Aggressive:** DireGrunts x2 (initial wave)
+- **Extra Guards:** Spawn at random positions for higher difficulty
+- **Timer Reduction:** 5s (Mid) → 8s (Late)
 
 ### Guard Types
 | Type | Color | Speed | Behavior |
@@ -243,7 +262,7 @@ Village rooms scale difficulty based on the current row in the run.
 |------|------|---------------|---------------|-----------------|------------|
 | **Early** | 1-2 | +0 | +0 | 0s | 1.0x |
 | **Mid** | 3-5 | +2 | +1 | -5s | 0.85x (faster) |
-| **Late** | 6+ | +4 | +1 | -8s | 0.7x (faster) |
+| **Late** | 6+ | +4 | +2 | -8s | 0.7x (faster) |
 
 ### Scaling Effects per Variant
 

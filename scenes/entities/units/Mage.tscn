@@ -1,6 +1,7 @@
-[gd_scene format=3 uid="uid://cm5ej578jyvnk"]
+[gd_scene load_steps=4 format=3 uid="uid://cm5ej578jyvnk"]
 
 [ext_resource type="Script" path="res://scenes/entities/units/Mage.gd" id="1_mage"]
+[ext_resource type="Texture2D" uid="uid://cxgohyhcyekkq" path="res://art/units/mage/mage.aseprite" id="2_sprite"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_mage"]
 radius = 13.0
@@ -31,13 +32,17 @@ offset_bottom = 6.0
 color = Color(1.0, 1.0, 1.0, 0.3)
 
 [node name="UnitVisual" type="ColorRect" parent="."]
-# TODO: Replace with mage unit art asset
 mouse_filter = 2
 offset_left = -4.0
 offset_top = -4.0
 offset_right = 4.0
 offset_bottom = 4.0
-color = Color(0.576, 0.439, 0.859, 1.0)
+color = Color(0.576, 0.439, 0.859, 0.0)
+
+[node name="Sprite2D" type="Sprite2D" parent="UnitVisual"]
+position = Vector2(4, 4)
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("2_sprite")
 
 [node name="HitboxArea" type="Area2D" parent="."]
 collision_layer = 1

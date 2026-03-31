@@ -45,11 +45,12 @@ var last_pathed_target: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
 	current_hp = max_hp
-	unit_visual.color = unit_color
 	var sprite_node := unit_visual.get_node_or_null("Sprite2D")
 	if sprite_node is Sprite2D:
 		unit_sprite = sprite_node
 		unit_visual.color = Color(0, 0, 0, 0)
+	else:
+		unit_visual.color = unit_color
 	if is_reviving:
 		SwarmManager.register_reviving_unit(self)
 	else:

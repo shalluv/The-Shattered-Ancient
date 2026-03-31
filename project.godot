@@ -37,6 +37,18 @@ window/stretch/mode="canvas_items"
 
 enabled=PackedStringArray("res://addons/AsepriteWizard/plugin.cfg")
 
+[importer_defaults]
+
+aseprite_wizard.plugin.static-texture={
+"first_frame_only": true,
+"layer/exclude_layers_pattern": "",
+"layer/only_visible_layers": false,
+"layer/split_layers": false,
+"sheet/scale": 1,
+"sheet/sheet_columns": 1,
+"sheet/sheet_type": "packed"
+}
+
 [input]
 
 move_swarm={

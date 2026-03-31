@@ -12,6 +12,9 @@ func _physics_process(delta: float) -> void:
 	if is_dying or is_reviving:
 		return
 
+	if unit_sprite and velocity.length_squared() > 1.0:
+		unit_sprite.rotation = velocity.angle() + PI / 2.0
+
 	var separation := _calculate_separation_force()
 
 	if has_move_target:
@@ -80,6 +83,9 @@ func _find_nearest_enemy_in_range() -> Node2D:
 
 
 func _fire_projectile(target: Node2D) -> void:
+	if unit_sprite:
+		var aim_dir := global_position.direction_to(target.global_position)
+		unit_sprite.rotation = aim_dir.angle() + PI / 2.0
 	var base_dir := global_position.direction_to(target.global_position)
 	var count: int = 1
 	if is_instance_valid(BoonManager):

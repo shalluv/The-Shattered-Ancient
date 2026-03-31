@@ -1,6 +1,7 @@
-[gd_scene format=3 uid="uid://cqnmojj11kank"]
+[gd_scene load_steps=3 format=3 uid="uid://cqnmojj11kank"]
 
 [ext_resource type="Script" path="res://scenes/entities/units/Projectile.gd" id="1_proj"]
+[ext_resource type="Texture2D" uid="uid://77y7b16l83oa" path="res://art/projectiles/arrow/arrow.aseprite" id="2_sprite"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_proj"]
 radius = 3.0
@@ -11,13 +12,17 @@ collision_mask = 2
 script = ExtResource("1_proj")
 
 [node name="ProjectileVisual" type="ColorRect" parent="."]
-# TODO: Replace with arrow art asset
 mouse_filter = 2
 offset_left = -2.0
 offset_top = -1.0
 offset_right = 2.0
 offset_bottom = 1.0
-color = Color(1.0, 0.843, 0.0, 1.0)
+color = Color(1.0, 0.843, 0.0, 0.0)
+
+[node name="Sprite2D" type="Sprite2D" parent="ProjectileVisual"]
+position = Vector2(2, 1)
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("2_sprite")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_proj")

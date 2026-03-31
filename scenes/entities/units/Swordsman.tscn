@@ -31,7 +31,7 @@ offset_left = -4.0
 offset_top = -4.0
 offset_right = 4.0
 offset_bottom = 4.0
-color = Color(1, 0.843, 0, 1)
+color = Color(1, 0.843, 0, 0)
 
 [node name="Sprite2D" type="Sprite2D" parent="UnitVisual"]
 position = Vector2(4, 4)

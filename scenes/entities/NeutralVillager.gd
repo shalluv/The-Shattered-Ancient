@@ -13,6 +13,8 @@ var SwordsmanScene := preload("res://scenes/entities/units/Swordsman.tscn")
 @onready var villager_visual: ColorRect = $VillagerVisual
 @onready var death_particles: GPUParticles2D = $DeathParticles
 
+var unit_sprite: Sprite2D = null
+
 var home_position: Vector2 = Vector2.ZERO
 var wander_target: Vector2 = Vector2.ZERO
 var has_wander_target: bool = false
@@ -36,6 +38,10 @@ const RING_COLOR: Color = Color(1.0, 0.843, 0.0, 0.4)
 
 
 func _ready() -> void:
+	var sprite_node := villager_visual.get_node_or_null("Sprite2D")
+	if sprite_node is Sprite2D:
+		unit_sprite = sprite_node
+		villager_visual.color = Color(0, 0, 0, 0)
 	home_position = global_position
 	add_to_group("neutrals")
 	if is_instance_valid(BoonManager):
@@ -48,6 +54,9 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	if is_dying or is_converting:
 		return
+
+	if unit_sprite and velocity.length_squared() > 1.0:
+		unit_sprite.rotation = velocity.angle() + PI / 2.0
 
 	var separation := _calculate_separation_force()
 
@@ -191,10 +200,16 @@ func _convert() -> void:
 
 	# TODO: Add unit conversion sound effect
 	var tween := create_tween()
-	tween.tween_property(villager_visual, "color", Color(1.0, 0.843, 0.0, 1.0), 0.5)
-	for i in 3:
-		tween.tween_property(villager_visual, "color", Color.WHITE, 0.08)
-		tween.tween_property(villager_visual, "color", Color(1.0, 0.843, 0.0, 1.0), 0.08)
+	if unit_sprite:
+		tween.tween_property(unit_sprite, "modulate", Color(1.0, 0.843, 0.0, 1.0), 0.5)
+		for i in 3:
+			tween.tween_property(unit_sprite, "modulate", Color.WHITE, 0.08)
+			tween.tween_property(unit_sprite, "modulate", Color(1.0, 0.843, 0.0, 1.0), 0.08)
+	else:
+		tween.tween_property(villager_visual, "color", Color(1.0, 0.843, 0.0, 1.0), 0.5)
+		for i in 3:
+			tween.tween_property(villager_visual, "color", Color.WHITE, 0.08)
+			tween.tween_property(villager_visual, "color", Color(1.0, 0.843, 0.0, 1.0), 0.08)
 
 	_play_conversion_particles()
 

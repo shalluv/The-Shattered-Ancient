@@ -165,6 +165,7 @@ Each run generates a **10-row procedural map**:
 |------|-------------|
 | Combat (Small) | 5 randomized combat variations |
 | Combat (Medium) | Larger battles, may include villages with neutrals |
+| Village | 5 unique variants with neutral villagers to rescue |
 | Miniboss | Stronger enemy encounters with rewards |
 | Hero Encounter | Fight a hero boss, choose a boon |
 | Shop | Spend gold on buffs |
@@ -187,6 +188,50 @@ Shop rooms offer purchasable buffs for the current run:
 - **Sharpened Blades** — melee damage boost
 - **Enchanted Quiver** — ranged damage boost
 - **Battle Standard** — army-wide buff
+
+### Village Variants
+
+**Village rooms** are special encounters where you rescue neutral villagers and convert them into units using Priests. Each variant offers unique challenges and scales with difficulty based on map row.
+
+#### The 5 Village Variants
+
+| Variant | Concept | Villagers | Main Challenge |
+|---------|---------|-----------|----------------|
+| **Divided** | Village split by lava damage zone | 4 mixed types | Navigate hazards, fight guards |
+| **Contested** | Priests actively converting villagers | 8 at risk | Kill priests before conversion |
+| **Gauntlet** | Layered defense protecting villagers | 6 in safe zone | Break through 3 enemy layers |
+| **Caravan** | Escort moving caravan to safety | 6 onboard | Protect caravan from hunters |
+| **Sacrifice** | Villagers bound to altars with timers | 3 bound | Rescue before time runs out |
+
+#### Difficulty Scaling (Based on Map Row)
+
+| Tier | Rows | Extra Enemies | Extra Priests | Special Effects |
+|------|------|---------------|---------------|-----------------|
+| **Early** | 1-2 | +0 | +0 | Base difficulty |
+| **Mid** | 3-5 | +2 | +1 | Faster spawns, reduced timers |
+| **Late** | 6+ | +4 | +2 | Fastest spawns, shortest timers |
+
+#### Priest Progression
+
+| Variant | Early | Mid | Late |
+|---------|-------|-----|------|
+| **Divided** | 0 priests | 1 priest | 2 priests |
+| **Contested** | 1 priest | 2 priests | 3 priests |
+| **Gauntlet** | 0 priests | 1 priest | 2 priests |
+| **Sacrifice** | No priests | No priests | No priests |
+| **Caravan** | No priests | No priests | No priests |
+
+#### Key Mechanics
+
+- **Priest Conversion:** Priests convert neutral villagers within aura radius
+- **Spawn Safety:** Enemies avoid spawning in damage zones/water
+- **Caravan Hunters:** Special enemies that only attack the caravan, not player units
+- **Sacrifice Timers:** 30s → 25s → 22s countdown before villagers die
+- **Random Selection:** Village variants use "exclude last picked" system (no repeats)
+
+---
+
+**📖 Full Documentation:** See [VILLAGE_VARIANTS.md](VILLAGE_VARIANTS.md) for detailed mechanics, enemy stats, spawn positions, and strategy tips.
 
 ### Terrain Zones
 Rooms can contain hazardous terrain:

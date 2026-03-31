@@ -8,7 +8,15 @@ const WANDER_PAUSE_MAX: float = 3.0
 const SEPARATION_RADIUS: float = 16.0
 const SEPARATION_STRENGTH: float = 50.0
 
+enum VillagerType { SWORDSMAN, ARCHER, MAGE, PRIEST }
+
+@export var villager_type: VillagerType = VillagerType.SWORDSMAN
+@export var villager_color: Color = Color(0.502, 0.502, 0.502, 1.0)
+
 var SwordsmanScene := preload("res://scenes/entities/units/Swordsman.tscn")
+var ArcherScene := preload("res://scenes/entities/units/Archer.tscn")
+var MageScene := preload("res://scenes/entities/units/Mage.tscn")
+var PriestScene := preload("res://scenes/entities/units/Priest.tscn")
 
 @onready var villager_visual: ColorRect = $VillagerVisual
 @onready var death_particles: GPUParticles2D = $DeathParticles
@@ -28,6 +36,8 @@ var in_aura: bool = false
 var converting_priest: Node2D = null
 var conversion_timer: float = 4.0
 var progress_ring: Polygon2D = null
+var is_bound: bool = false
+var is_auto_converting: bool = false
 
 const RING_OUTER_RADIUS: float = 14.0
 const RING_INNER_RADIUS: float = 12.0
@@ -41,19 +51,25 @@ func _ready() -> void:
 	if is_instance_valid(BoonManager):
 		conversion_time = BoonManager.get_conversion_time()
 	conversion_timer = conversion_time
+	villager_visual.color = villager_color
 	_setup_death_particles()
-	_pick_wander_target()
+	call_deferred("_pick_wander_target")
+	call_deferred("_check_initial_position")
 
 
 func _physics_process(delta: float) -> void:
 	if is_dying or is_converting:
 		return
+	
+	if is_bound:
+		return
 
 	var separation := _calculate_separation_force()
 
-	if in_aura:
+	if is_auto_converting or in_aura:
 		conversion_timer -= delta
-		_update_progress_ring()
+		if in_aura:
+			_update_progress_ring()
 		if conversion_timer <= 0.0:
 			_convert()
 			return
@@ -71,7 +87,18 @@ func _physics_process(delta: float) -> void:
 
 	var distance := global_position.distance_to(wander_target)
 	if distance > 3.0:
+		if _is_in_danger_zone(global_position):
+			var escape_dir := _get_escape_direction()
+			velocity = escape_dir * WANDER_SPEED
+			move_and_slide()
+			has_wander_target = false
+			return
+		
 		if not _follow_path_villager(separation):
+			var next_pos := global_position + global_position.direction_to(wander_target) * 10.0
+			if _is_in_danger_zone(next_pos):
+				has_wander_target = false
+				return
 			var direction := global_position.direction_to(wander_target)
 			velocity = direction * WANDER_SPEED + separation
 		move_and_slide()
@@ -103,30 +130,52 @@ func _pick_wander_target() -> void:
 	if in_aura and is_instance_valid(converting_priest) and randf() < 0.7:
 		center = converting_priest.global_position
 
-	var angle := randf() * TAU
-	var radius := randf() * WANDER_RADIUS
-	wander_target = center + Vector2(cos(angle), sin(angle)) * radius
-	current_path = Pathfinder.find_path(global_position, wander_target)
-	path_index = 0
-	_advance_path_index_villager()
-	if current_path.is_empty() and global_position.distance_to(wander_target) >= 32.0:
-		wander_target = center + Vector2(cos(angle + PI), sin(angle + PI)) * radius * 0.5
+	for _attempt in 5:
+		var angle := randf() * TAU
+		var radius := randf() * WANDER_RADIUS
+		var candidate := center + Vector2(cos(angle), sin(angle)) * radius
+		
+		if _is_in_danger_zone(candidate):
+			continue
+		
+		wander_target = candidate
 		current_path = Pathfinder.find_path(global_position, wander_target)
 		path_index = 0
 		_advance_path_index_villager()
+		if current_path.is_empty() and global_position.distance_to(wander_target) >= 32.0:
+			wander_target = center + Vector2(cos(angle + PI), sin(angle + PI)) * radius * 0.5
+			if _is_in_danger_zone(wander_target):
+				continue
+			current_path = Pathfinder.find_path(global_position, wander_target)
+			path_index = 0
+			_advance_path_index_villager()
+		has_wander_target = true
+		return
+	
 	has_wander_target = true
+	wander_target = global_position
 
 
 func _follow_path_villager(separation: Vector2) -> bool:
 	if current_path.is_empty() or path_index >= current_path.size():
 		return false
 	var waypoint := current_path[path_index]
+	
+	if _is_in_danger_zone(waypoint):
+		current_path = PackedVector2Array()
+		has_wander_target = false
+		return false
+	
 	var dist := global_position.distance_to(waypoint)
 	if dist <= WAYPOINT_THRESHOLD:
 		path_index += 1
 		if path_index >= current_path.size():
 			return false
 		waypoint = current_path[path_index]
+		if _is_in_danger_zone(waypoint):
+			current_path = PackedVector2Array()
+			has_wander_target = false
+			return false
 	var direction := global_position.direction_to(waypoint)
 	velocity = direction * WANDER_SPEED + separation
 	return true
@@ -142,13 +191,75 @@ func _advance_path_index_villager() -> void:
 			break
 
 
+func _check_initial_position() -> void:
+	if _is_in_danger_zone(global_position):
+		var escape_dir := _get_escape_direction()
+		global_position += escape_dir * 50.0
+		home_position = global_position
+
+
+func _is_in_danger_zone(pos: Vector2) -> bool:
+	var damage_zones := get_tree().get_nodes_in_group("damage_zones")
+	for zone in damage_zones:
+		if not is_instance_valid(zone):
+			continue
+		var zone_pos: Vector2 = zone.global_position
+		var zone_size: Vector2 = zone.zone_size if zone.has_method("get") else Vector2(100, 100)
+		if "zone_size" in zone:
+			zone_size = zone.zone_size
+		var rect := Rect2(zone_pos - zone_size / 2.0, zone_size)
+		if rect.has_point(pos):
+			return true
+	
+	var altars := get_tree().get_nodes_in_group("altars")
+	for altar in altars:
+		if not is_instance_valid(altar):
+			continue
+		var altar_rect: Rect2 = altar.get_rect() if altar.has_method("get_rect") else Rect2()
+		if "position" in altar and "size" in altar:
+			altar_rect = Rect2(altar.position, altar.size)
+		if altar_rect.has_point(pos):
+			return true
+	
+	return false
+
+
+func _get_escape_direction() -> Vector2:
+	var escape_dir := Vector2.ZERO
+	
+	var damage_zones := get_tree().get_nodes_in_group("damage_zones")
+	for zone in damage_zones:
+		if not is_instance_valid(zone):
+			continue
+		var zone_pos: Vector2 = zone.global_position
+		var dist := global_position.distance_to(zone_pos)
+		if dist < 150.0:
+			escape_dir += zone_pos.direction_to(global_position)
+	
+	var altars := get_tree().get_nodes_in_group("altars")
+	for altar in altars:
+		if not is_instance_valid(altar):
+			continue
+		if "position" in altar and "size" in altar:
+			var altar_center: Vector2 = Vector2(altar.position.x, altar.position.y) + Vector2(altar.size.x, altar.size.y) / 2.0
+			var dist := global_position.distance_to(altar_center)
+			if dist < 80.0:
+				escape_dir += altar_center.direction_to(global_position)
+	
+	if escape_dir.length_squared() < 0.01:
+		escape_dir = Vector2(randf() - 0.5, randf() - 0.5).normalized()
+	
+	return escape_dir.normalized()
+
+
 func set_in_aura(value: bool, priest: Node2D) -> void:
 	if value == in_aura and priest == converting_priest:
 		return
 	in_aura = value
 	converting_priest = priest
 	if not in_aura:
-		conversion_timer = conversion_time
+		if not is_auto_converting:
+			conversion_timer = conversion_time
 		_remove_progress_ring()
 
 
@@ -200,11 +311,23 @@ func _convert() -> void:
 
 	await tween.finished
 
-	var unit := SwordsmanScene.instantiate()
+	var unit := _get_unit_scene().instantiate()
 	unit.global_position = global_position
 	get_parent().add_child(unit)
 
 	queue_free()
+
+
+func _get_unit_scene() -> PackedScene:
+	match villager_type:
+		VillagerType.ARCHER:
+			return ArcherScene
+		VillagerType.MAGE:
+			return MageScene
+		VillagerType.PRIEST:
+			return PriestScene
+		_:
+			return SwordsmanScene
 
 
 func _play_conversion_particles() -> void:

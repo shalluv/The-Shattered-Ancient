@@ -37,6 +37,7 @@ var last_pathed_target: Vector2 = Vector2.ZERO
 func _ready() -> void:
 	enemy_visual.color = enemy_color
 	add_to_group("enemies")
+	hitbox_area.collision_mask = 1  # Detect swarm_units (layer 1)
 	hitbox_area.area_entered.connect(_on_hitbox_area_entered)
 	damage_cooldown_timer.wait_time = DAMAGE_COOLDOWN
 	damage_cooldown_timer.one_shot = true

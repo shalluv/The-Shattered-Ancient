@@ -1,0 +1,44 @@
+[gd_scene load_steps=3 format=3 uid="uid://village_sacrifice_001"]
+
+[ext_resource type="PackedScene" uid="uid://cskmrgh1jyvnk" path="res://scenes/dungeon/RoomBase.tscn" id="1_base"]
+[ext_resource type="Script" path="res://scenes/dungeon/VillageSacrifice.gd" id="2_script"]
+
+[node name="VillageSacrifice" instance=ExtResource("1_base")]
+script = ExtResource("2_script")
+room_size = Vector2(1024, 768)
+
+[node name="PlayerSpawnPoint" type="Marker2D" parent="."]
+position = Vector2(512, 700)
+
+[node name="AltarSpawn1" type="Marker2D" parent="."]
+position = Vector2(512, 200)
+
+[node name="AltarSpawn2" type="Marker2D" parent="."]
+position = Vector2(250, 400)
+
+[node name="AltarSpawn3" type="Marker2D" parent="."]
+position = Vector2(774, 400)
+
+[node name="GuardSpawn1" type="Marker2D" parent="."]
+position = Vector2(450, 130)
+
+[node name="GuardSpawn2" type="Marker2D" parent="."]
+position = Vector2(574, 130)
+
+[node name="GuardSpawn3" type="Marker2D" parent="."]
+position = Vector2(200, 330)
+
+[node name="GuardSpawn4" type="Marker2D" parent="."]
+position = Vector2(300, 330)
+
+[node name="GuardSpawn5" type="Marker2D" parent="."]
+position = Vector2(724, 330)
+
+[node name="GuardSpawn6" type="Marker2D" parent="."]
+position = Vector2(824, 330)
+
+[node name="AggressiveSpawn1" type="Marker2D" parent="."]
+position = Vector2(300, 550)
+
+[node name="AggressiveSpawn2" type="Marker2D" parent="."]
+position = Vector2(724, 550)

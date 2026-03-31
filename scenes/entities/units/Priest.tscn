@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://cqngjx18jyvnk"]
+[gd_scene format=3 uid="uid://cqngjx18jyvnk"]
 
 [ext_resource type="Script" uid="uid://bp8re8v4ue2d8" path="res://scenes/entities/units/Priest.gd" id="1_priest"]
 [ext_resource type="Texture2D" uid="uid://cfsebmvnvafao" path="res://art/units/priest/priest.aseprite" id="2_sprite"]
@@ -7,7 +7,6 @@
 radius = 5.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_priest"]
-radius = 13.0
 
 [node name="Priest" type="CharacterBody2D" unique_id=1837796448]
 collision_mask = 10
@@ -30,14 +29,14 @@ mouse_filter = 2
 color = Color(1, 1, 1, 0.3)
 
 [node name="UnitVisual" type="ColorRect" parent="." unique_id=1104035277]
-mouse_filter = 2
 offset_left = -4.0
 offset_top = -4.0
 offset_right = 4.0
 offset_bottom = 4.0
+mouse_filter = 2
 color = Color(1, 0.98, 0.804, 0)
 
-[node name="Sprite2D" type="Sprite2D" parent="UnitVisual"]
+[node name="Sprite2D" type="Sprite2D" parent="UnitVisual" unique_id=323590651]
 position = Vector2(4, 4)
 scale = Vector2(0.25, 0.25)
 texture = ExtResource("2_sprite")

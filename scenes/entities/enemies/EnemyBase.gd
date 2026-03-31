@@ -19,6 +19,7 @@ const SEPARATION_STRENGTH: float = 80.0
 
 var is_dying: bool = false
 var can_deal_damage: bool = true
+var last_attacker: Node2D = null
 var last_killed_unit_type: String = "swordsman"
 var speed_multiplier: float = 1.0
 var slow_timer: float = 0.0
@@ -219,10 +220,6 @@ func _on_hitbox_area_entered(other_area: Area2D) -> void:
 		if unit.has_method("get_unit_type"):
 			last_killed_unit_type = unit.get_unit_type()
 		unit.take_damage(damage)
-		var hit_damage: int = 1
-		if unit.has_method("get_effective_damage"):
-			hit_damage = unit.get_effective_damage()
-		take_hit(hit_damage)
 		can_deal_damage = false
 		damage_cooldown_timer.start()
 
@@ -301,6 +298,9 @@ func _spawn_absorbed_unit() -> void:
 	await get_tree().process_frame
 	new_unit.hitbox_area.set_deferred("monitoring", false)
 	new_unit.hitbox_area.set_deferred("monitorable", false)
+	if new_unit.has_node("AttackArea"):
+		new_unit.attack_area.set_deferred("monitoring", false)
+		new_unit.attack_area.set_deferred("monitorable", false)
 
 	_play_revival_effect(new_unit)
 

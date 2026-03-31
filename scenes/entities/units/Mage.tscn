@@ -1,55 +1,64 @@
-[gd_scene load_steps=4 format=3 uid="uid://cm5ej578jyvnk"]
+[gd_scene format=3 uid="uid://cm5ej578jyvnk"]
 
-[ext_resource type="Script" path="res://scenes/entities/units/Mage.gd" id="1_mage"]
+[ext_resource type="Script" uid="uid://boq3frnj5njm2" path="res://scenes/entities/units/Mage.gd" id="1_mage"]
 [ext_resource type="Texture2D" uid="uid://cxgohyhcyekkq" path="res://art/units/mage/mage.aseprite" id="2_sprite"]
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_mage"]
-radius = 13.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_mage_physics"]
 radius = 5.0
 
-[node name="Mage" type="CharacterBody2D"]
-collision_layer = 1
+[sub_resource type="CircleShape2D" id="CircleShape2D_mage"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_mage_attack"]
+radius = 20.0
+
+[node name="Mage" type="CharacterBody2D" unique_id=1191126457]
 collision_mask = 10
 script = ExtResource("1_mage")
 unit_type = "mage"
-unit_color = Color(0.576, 0.439, 0.859, 1.0)
-max_hp = 1
-damage = 1
+unit_color = Color(0.576, 0.439, 0.859, 1)
 pursuit_range = 140.0
 
-[node name="PhysicsCollision" type="CollisionShape2D" parent="."]
+[node name="PhysicsCollision" type="CollisionShape2D" parent="." unique_id=1329147029]
 shape = SubResource("CircleShape2D_mage_physics")
 
-[node name="SelectionIndicator" type="ColorRect" parent="."]
-mouse_filter = 2
+[node name="SelectionIndicator" type="ColorRect" parent="." unique_id=1041055696]
 visible = false
 offset_left = -6.0
 offset_top = -6.0
 offset_right = 6.0
 offset_bottom = 6.0
-color = Color(1.0, 1.0, 1.0, 0.3)
-
-[node name="UnitVisual" type="ColorRect" parent="."]
 mouse_filter = 2
+color = Color(1, 1, 1, 0.3)
+
+[node name="UnitVisual" type="ColorRect" parent="." unique_id=1543554876]
 offset_left = -4.0
 offset_top = -4.0
 offset_right = 4.0
 offset_bottom = 4.0
-color = Color(0.576, 0.439, 0.859, 0.0)
+mouse_filter = 2
+color = Color(0.576, 0.439, 0.859, 0)
 
-[node name="Sprite2D" type="Sprite2D" parent="UnitVisual"]
+[node name="Sprite2D" type="Sprite2D" parent="UnitVisual" unique_id=491655463]
 position = Vector2(4, 4)
 scale = Vector2(0.25, 0.25)
 texture = ExtResource("2_sprite")
 
-[node name="HitboxArea" type="Area2D" parent="."]
-collision_layer = 1
+[node name="HitboxArea" type="Area2D" parent="." unique_id=733962282]
 collision_mask = 2
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="HitboxArea"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HitboxArea" unique_id=1980936229]
 shape = SubResource("CircleShape2D_mage")
 
-[node name="DeathParticles" type="GPUParticles2D" parent="."]
+[node name="AttackArea" type="Area2D" parent="." unique_id=1632964980]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea" unique_id=945525644]
+shape = SubResource("CircleShape2D_mage_attack")
+
+[node name="AttackCooldownTimer" type="Timer" parent="." unique_id=1916751792]
+wait_time = 0.5
+one_shot = true
+
+[node name="DeathParticles" type="GPUParticles2D" parent="." unique_id=782317547]
 emitting = false

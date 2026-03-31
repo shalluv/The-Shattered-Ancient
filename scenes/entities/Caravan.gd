@@ -6,7 +6,7 @@ signal villager_died
 
 const CARAVAN_COLOR: Color = Color("#8B4513")
 const CARAVAN_SIZE: Vector2 = Vector2(40, 24)
-const MOVE_SPEED: float = 40.0
+const MOVE_SPEED: float = 20.0
 const STUN_DURATION: float = 1.5
 
 @export var max_villagers: int = 6

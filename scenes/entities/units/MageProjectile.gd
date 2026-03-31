@@ -1,6 +1,6 @@
 extends Area2D
 
-const PROJECTILE_SPEED: float = 200.0
+const PROJECTILE_SPEED: float = 100.0
 const PROJECTILE_DAMAGE: int = 1
 
 var target_position: Vector2 = Vector2.ZERO

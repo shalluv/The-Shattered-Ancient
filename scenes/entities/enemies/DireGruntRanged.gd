@@ -1,13 +1,13 @@
 extends "res://scenes/entities/enemies/EnemyBase.gd"
 
 const GRUNT_COLOR: Color = Color("#6a2a2a")
-const GRUNT_SPEED: float = 40.0
+const GRUNT_SPEED: float = 20.0
 const GRUNT_HP: int = 1
 const GRUNT_DAMAGE: int = 1
-const GRUNT_ATTACK_COOLDOWN: float = 2.5
+const GRUNT_ATTACK_COOLDOWN: float = 5.0
 const GRUNT_PATH_RECALC: float = 0.4
 const RANGED_ATTACK_RANGE: float = 140.0
-const PROJECTILE_SPEED: float = 100.0
+const PROJECTILE_SPEED: float = 50.0
 
 var attack_timer: float = 0.0
 

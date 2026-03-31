@@ -62,11 +62,15 @@ func unlock_upgrade(upgrade_id: String) -> void:
 
 
 func get_draft_budget() -> int:
-	var budget: int = 20
-	if has_upgrade("budget_25"):
+	var budget: int = 30
+	if has_upgrade("budget_35"):
 		budget += 5
-	if has_upgrade("budget_30"):
+	if has_upgrade("budget_40"):
 		budget += 5
+	if has_upgrade("budget_50"):
+		budget += 10
+	if has_upgrade("budget_60"):
+		budget += 10
 	return budget
 
 

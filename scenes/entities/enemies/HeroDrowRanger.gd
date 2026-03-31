@@ -2,8 +2,8 @@ extends "res://scenes/entities/enemies/HeroFighter.gd"
 
 const KITE_RANGE: float = 200.0
 const ATTACK_DAMAGE: int = 12
-const ATTACK_SPEED: float = 300.0
-const ATTACK_COOLDOWN_TIME: float = 0.7
+const ATTACK_SPEED: float = 150.0
+const ATTACK_COOLDOWN_TIME: float = 1.4
 const MULTISHOT_WINDUP: float = 0.3
 const MULTISHOT_COUNT: int = 5
 const MULTISHOT_SPREAD: float = deg_to_rad(60.0)
@@ -25,7 +25,7 @@ func _ready() -> void:
 	hero_id = "drow_ranger"
 	hero_hp = 25
 	hero_max_hp = 25
-	move_speed = 130.0
+	move_speed = 55.0
 	melee_damage = 6
 	attack_cooldown = 999.0
 	ability_cooldown = 999.0

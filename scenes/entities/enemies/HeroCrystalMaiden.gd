@@ -4,7 +4,7 @@ const KITE_RANGE: float = 150.0
 const RETREAT_RANGE: float = 80.0
 const ATTACK_DAMAGE: int = 8
 const ATTACK_SPEED: float = 180.0
-const ATTACK_COOLDOWN_TIME: float = 1.2
+const ATTACK_COOLDOWN_TIME: float = 2.4
 const ATTACK_SLOW_AMOUNT: float = 0.7
 const ATTACK_SLOW_DURATION: float = 2.0
 const CRYSTAL_NOVA_WINDUP: float = 0.5
@@ -24,7 +24,7 @@ func _ready() -> void:
 	hero_id = "crystal_maiden"
 	hero_hp = 22
 	hero_max_hp = 22
-	move_speed = 70.0
+	move_speed = 35.0
 	melee_damage = 5
 	attack_cooldown = 999.0
 	ability_cooldown = 999.0

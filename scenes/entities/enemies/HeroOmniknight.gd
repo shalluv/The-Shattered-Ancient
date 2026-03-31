@@ -14,9 +14,9 @@ func _ready() -> void:
 	hero_id = "omniknight"
 	hero_hp = 45
 	hero_max_hp = 45
-	move_speed = 60.0
+	move_speed = 30.0
 	melee_damage = 18
-	attack_cooldown = 1.4
+	attack_cooldown = 2.8
 	ability_cooldown = 8.0
 	threshold_percent = 0.5
 	super()

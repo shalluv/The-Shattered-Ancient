@@ -2,10 +2,10 @@ extends "res://scenes/entities/enemies/EnemyBase.gd"
 
 const SPEARWALL_HP: int = 4
 const SPEARWALL_DAMAGE: int = 12
-const SPEARWALL_ATTACK_COOLDOWN: float = 1.2
+const SPEARWALL_ATTACK_COOLDOWN: float = 2.4
 const FRONT_ARC_THRESHOLD: float = 0.3
 const REFLECT_FRACTION: float = 0.5
-const FORMATION_ARRIVE_SPEED: float = 120.0
+const FORMATION_ARRIVE_SPEED: float = 60.0
 const SPEARWALL_GOLD_DROP: int = 4
 
 var group: Node2D = null

@@ -1,6 +1,6 @@
 extends Area2D
 
-@export var projectile_speed: float = 180.0
+@export var projectile_speed: float = 90.0
 @export var max_distance: float = 300.0
 @export var projectile_damage: int = 8
 @export var projectile_color: Color = Color(0.545, 0.0, 0.0, 1.0)

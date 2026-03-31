@@ -1,10 +1,10 @@
 extends "res://scenes/entities/enemies/EnemyBase.gd"
 
 const HUNTER_COLOR: Color = Color("#5a3a2a")
-const HUNTER_SPEED: float = 85.0
+const HUNTER_SPEED: float = 42.5
 const HUNTER_HP: int = 2
 const HUNTER_DAMAGE: int = 1
-const HUNTER_ATTACK_COOLDOWN: float = 0.8
+const HUNTER_ATTACK_COOLDOWN: float = 1.6
 const HUNTER_PATH_RECALC: float = 0.3
 const MELEE_ATTACK_RANGE: float = 35.0
 

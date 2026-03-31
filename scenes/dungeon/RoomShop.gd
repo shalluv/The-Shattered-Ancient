@@ -3,16 +3,16 @@ extends "res://scenes/dungeon/RoomBase.gd"
 const SHOP_FLOOR_COLOR: Color = Color(0.08, 0.06, 0.03)
 
 const SHOP_ITEMS: Array[Dictionary] = [
-	{"id": "mercenary_swordsman", "name": "Mercenary Swordsman", "cost": 8, "desc": "+3 Swordsmen", "category": "unit"},
-	{"id": "hired_archer", "name": "Hired Archer", "cost": 8, "desc": "+3 Archers", "category": "unit"},
-	{"id": "wandering_mage", "name": "Wandering Mage", "cost": 12, "desc": "+1 Mage", "category": "unit"},
-	{"id": "holy_wanderer", "name": "Holy Wanderer", "cost": 15, "desc": "+1 Priest", "category": "unit"},
-	{"id": "sharpened_blades", "name": "Sharpened Blades", "cost": 10, "desc": "All Swordsmen +1 damage this run", "category": "combat"},
-	{"id": "enchanted_quiver", "name": "Enchanted Quiver", "cost": 10, "desc": "Archer cooldown -0.3s this run", "category": "combat"},
-	{"id": "battle_standard", "name": "Battle Standard", "cost": 12, "desc": "All units survive 2 hits this run", "category": "combat"},
-	{"id": "scouting_map", "name": "Scouting Map", "cost": 5, "desc": "Reveal all remaining room types", "category": "utility"},
-	{"id": "war_chest", "name": "War Chest", "cost": 6, "desc": "+15 Gold immediately", "category": "utility"},
-	{"id": "ancient_relic", "name": "Ancient Relic", "cost": 20, "desc": "+5 Radiant Ore Shards at end of run", "category": "utility"},
+	{"id": "mercenary_swordsman", "name": "Mercenary Swordsman", "cost": 30, "desc": "+3 Swordsmen", "category": "unit"},
+	{"id": "hired_archer", "name": "Hired Archer", "cost": 35, "desc": "+3 Archers", "category": "unit"},
+	{"id": "wandering_mage", "name": "Wandering Mage", "cost": 15, "desc": "+1 Mage", "category": "unit"},
+	{"id": "holy_wanderer", "name": "Holy Wanderer", "cost": 30, "desc": "+1 Priest", "category": "unit"},
+	{"id": "sharpened_blades", "name": "Sharpened Blades", "cost": 50, "desc": "All Swordsmen +1 damage this run", "category": "combat"},
+	{"id": "enchanted_quiver", "name": "Enchanted Quiver", "cost": 40, "desc": "Archer cooldown -0.3s this run", "category": "combat"},
+	{"id": "battle_standard", "name": "Battle Standard", "cost": 80, "desc": "All units survive 2 hits this run", "category": "combat"},
+	{"id": "scouting_map", "name": "Scouting Map", "cost": 20, "desc": "Reveal all remaining room types", "category": "utility"},
+	{"id": "war_chest", "name": "War Chest", "cost": 20, "desc": "+30 Gold immediately", "category": "utility"},
+	{"id": "ancient_relic", "name": "Ancient Relic", "cost": 55, "desc": "+5 Radiant Ore Shards at end of run", "category": "utility"},
 ]
 
 var shop_overlay: Control = null
@@ -283,7 +283,7 @@ func _apply_item(item_id: String) -> void:
 		"scouting_map":
 			RunManager.add_shop_buff("scouting_map")
 		"war_chest":
-			RunManager.add_gold(15)
+			RunManager.add_gold(30)
 		"ancient_relic":
 			RunManager.bonus_end_shards += 5
 

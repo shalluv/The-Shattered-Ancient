@@ -6,9 +6,9 @@ signal hero_defeated
 @export var is_clone: bool = false
 @export var hero_hp: int = 30
 @export var hero_max_hp: int = 30
-@export var move_speed: float = 120.0
+@export var move_speed: float = 60.0
 @export var melee_damage: int = 10
-@export var attack_cooldown: float = 0.3
+@export var attack_cooldown: float = 0.6
 @export var ability_cooldown: float = 8.0
 @export var threshold_percent: float = 0.3
 

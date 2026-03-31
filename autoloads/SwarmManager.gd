@@ -153,10 +153,10 @@ func apply_meta_to_unit(unit: Node2D) -> void:
 					unit.current_hp = 2
 			"archer":
 				if MetaProgress.has_upgrade("eagle_archers"):
-					unit.pursuit_range = 105.0
+					unit.pursuit_range = 210.0
 			"priest":
 				if MetaProgress.has_upgrade("holy_presence"):
-					unit.aura_radius = 80.0
+					unit.aura_radius = 90.0
 			"mage":
 				pass
 		if RunManager.has_shop_buff("sharpened_blades") and utype == "swordsman":

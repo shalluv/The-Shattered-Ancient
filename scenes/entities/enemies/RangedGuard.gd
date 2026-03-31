@@ -3,12 +3,12 @@ extends "res://scenes/entities/enemies/EnemyBase.gd"
 const GUARD_COLOR: Color = Color("#4a3a5a")
 const AGGRO_RADIUS: float = 150.0
 const RANGED_ATTACK_RANGE: float = 140.0
-const RANGED_ATTACK_COOLDOWN: float = 2.0
-const PROJECTILE_SPEED: float = 150.0
+const RANGED_ATTACK_COOLDOWN: float = 4.0
+const PROJECTILE_SPEED: float = 75.0
 const PROJECTILE_DAMAGE: int = 1
 const RETREAT_DISTANCE: float = 80.0
 const PATROL_RADIUS: float = 30.0
-const PATROL_SPEED: float = 20.0
+const PATROL_SPEED: float = 10.0
 const PATROL_PAUSE_MIN: float = 1.5
 const PATROL_PAUSE_MAX: float = 3.0
 
@@ -22,7 +22,7 @@ var has_patrol_target: bool = false
 
 func _ready() -> void:
 	enemy_hp = 1
-	move_speed = 25.0
+	move_speed = 12.5
 	damage = 1
 	enemy_color = GUARD_COLOR
 	super._ready()

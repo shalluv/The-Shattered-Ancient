@@ -2,10 +2,10 @@ extends "res://scenes/entities/enemies/EnemyBase.gd"
 
 signal hound_died(hound: Node)
 
-const HOUND_SPEED: float = 180.0
+const HOUND_SPEED: float = 80.0
 const HOUND_HP: int = 2
 const HOUND_DAMAGE: int = 8
-const HOUND_ATTACK_COOLDOWN: float = 0.8
+const HOUND_ATTACK_COOLDOWN: float = 1.6
 const HOUND_PATH_RECALC: float = 0.2
 const HOUND_GOLD_DROP: int = 5
 

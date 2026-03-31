@@ -186,11 +186,15 @@ func _on_unit_count_changed(_new_count: int) -> void:
 
 
 func _on_enemies_remaining_changed(count: int) -> void:
-	if count <= 0:
+	if count == -1:
+		enemy_count_label.text = "Escort the Caravan"
+		enemy_count_label.add_theme_color_override("font_color", Color(0.9, 0.7, 0.2, 1.0))
+	elif count <= 0:
 		enemy_count_label.text = "CLEARED"
 		enemy_count_label.add_theme_color_override("font_color", Color(1.0, 0.843, 0.0, 1.0))
 	else:
 		enemy_count_label.text = "Enemies: %d" % count
+		enemy_count_label.add_theme_color_override("font_color", Color.RED)
 
 
 func _process(_delta: float) -> void:

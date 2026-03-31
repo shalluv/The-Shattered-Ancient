@@ -1,0 +1,53 @@
+[gd_scene load_steps=3 format=3 uid="uid://village_gauntlet_001"]
+
+[ext_resource type="PackedScene" uid="uid://cskmrgh1jyvnk" path="res://scenes/dungeon/RoomBase.tscn" id="1_base"]
+[ext_resource type="Script" path="res://scenes/dungeon/VillageGauntlet.gd" id="2_script"]
+
+[node name="VillageGauntlet" instance=ExtResource("1_base")]
+script = ExtResource("2_script")
+room_size = Vector2(1024, 768)
+
+[node name="PlayerSpawnPoint" type="Marker2D" parent="."]
+position = Vector2(512, 700)
+
+[node name="EnemyLayer1_1" type="Marker2D" parent="."]
+position = Vector2(200, 550)
+
+[node name="EnemyLayer1_2" type="Marker2D" parent="."]
+position = Vector2(824, 550)
+
+[node name="EnemyLayer2_1" type="Marker2D" parent="."]
+position = Vector2(300, 420)
+
+[node name="EnemyLayer2_2" type="Marker2D" parent="."]
+position = Vector2(724, 420)
+
+[node name="EnemyLayer3_1" type="Marker2D" parent="."]
+position = Vector2(200, 300)
+
+[node name="EnemyLayer3_2" type="Marker2D" parent="."]
+position = Vector2(824, 300)
+
+[node name="VillagerSpawn1" type="Marker2D" parent="."]
+position = Vector2(220, 130)
+
+[node name="VillagerSpawn2" type="Marker2D" parent="."]
+position = Vector2(350, 130)
+
+[node name="VillagerSpawn3" type="Marker2D" parent="."]
+position = Vector2(470, 130)
+
+[node name="VillagerSpawn4" type="Marker2D" parent="."]
+position = Vector2(554, 130)
+
+[node name="VillagerSpawn5" type="Marker2D" parent="."]
+position = Vector2(680, 130)
+
+[node name="VillagerSpawn6" type="Marker2D" parent="."]
+position = Vector2(804, 130)
+
+[node name="EntranceGuard1" type="Marker2D" parent="."]
+position = Vector2(400, 220)
+
+[node name="EntranceGuard2" type="Marker2D" parent="."]
+position = Vector2(624, 220)

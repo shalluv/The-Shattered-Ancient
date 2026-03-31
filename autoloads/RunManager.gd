@@ -3,6 +3,7 @@ extends Node
 signal room_cleared
 signal run_ended(won: bool)
 signal enemies_remaining_changed(count: int)
+signal game_over_requested(won: bool)
 
 const STARTING_GOLD: int = 0
 const TOTAL_ROOMS: int = 10
@@ -37,6 +38,7 @@ var hero_boons: Dictionary = {}
 var map_data: MapData = null
 var current_node_index: int = 0
 var last_miniboss_scene: String = ""
+var last_village_scene: String = ""
 
 const COMBAT_SMALL_SCENES: Array[String] = [
 	"res://scenes/dungeon/CombatSmall1.tscn",
@@ -53,6 +55,14 @@ const MINIBOSS_SCENES: Array[String] = [
 	"res://scenes/dungeon/RoomMiniBoss4.tscn",
 ]
 
+const VILLAGE_SCENES: Array[String] = [
+	"res://scenes/dungeon/VillageDivided.tscn",
+	"res://scenes/dungeon/VillageContested.tscn", 
+	"res://scenes/dungeon/VillageGauntlet.tscn",
+	"res://scenes/dungeon/VillageCaravan.tscn",
+	"res://scenes/dungeon/VillageSacrifice.tscn",
+]
+
 const ROOM_DIFFICULTY: Array[Dictionary] = [
 	{"enemy_count": 5, "enemy_hp": 1, "enemy_damage": 1},
 	{"enemy_count": 5, "enemy_hp": 1, "enemy_damage": 1},
@@ -65,6 +75,12 @@ const ROOM_DIFFICULTY: Array[Dictionary] = [
 	{"enemy_count": 8, "enemy_hp": 3, "enemy_damage": 2},
 	{"enemy_count": 0, "enemy_hp": 0, "enemy_damage": 0},
 ]
+
+const VILLAGE_DIFFICULTY: Dictionary = {
+	"early": {"extra_enemies": 0, "extra_priests": 0, "timer_reduction": 0.0, "spawn_rate_mult": 1.0},
+	"mid": {"extra_enemies": 2, "extra_priests": 1, "timer_reduction": 5.0, "spawn_rate_mult": 0.85},
+	"late": {"extra_enemies": 4, "extra_priests": 1, "timer_reduction": 8.0, "spawn_rate_mult": 0.7},
+}
 
 
 func get_combat_small_scene() -> String:
@@ -80,6 +96,18 @@ func get_miniboss_scene() -> String:
 		pool = MINIBOSS_SCENES.duplicate()
 	var picked: String = pool[randi() % pool.size()]
 	last_miniboss_scene = picked
+	return picked
+
+
+func get_village_scene() -> String:
+	var pool: Array[String] = []
+	for scene in VILLAGE_SCENES:
+		if scene != last_village_scene:
+			pool.append(scene)
+	if pool.is_empty():
+		pool = VILLAGE_SCENES.duplicate()
+	var picked: String = pool[randi() % pool.size()]
+	last_village_scene = picked
 	return picked
 
 
@@ -108,6 +136,7 @@ func start_run() -> void:
 	map_data = null
 	current_node_index = 0
 	last_miniboss_scene = ""
+	last_village_scene = ""
 	SwarmManager.reset()
 	generate_new_map()
 
@@ -178,7 +207,7 @@ func get_room_scene_path() -> String:
 		var room_type: String = chosen_room_data.get("type", "combat")
 		match room_type:
 			"village":
-				return "res://scenes/dungeon/RoomMedium.tscn"
+				return get_village_scene()
 			"hero":
 				return "res://scenes/dungeon/RoomHero.tscn"
 			"shop":
@@ -196,6 +225,8 @@ func get_room_scene_path() -> String:
 
 
 func on_enemy_killed() -> void:
+	if enemies_remaining < 0:
+		return
 	enemies_remaining -= 1
 	enemies_remaining_changed.emit(enemies_remaining)
 	if enemies_remaining <= 0 and is_run_active:
@@ -208,6 +239,9 @@ func set_room_enemy_count(count: int) -> void:
 
 
 func end_run(won: bool) -> void:
+	if not is_run_active:
+		return
+	
 	is_run_active = false
 	last_run_won = won
 	if won:
@@ -221,6 +255,7 @@ func end_run(won: bool) -> void:
 		MetaProgress.add_shards(bonus_end_shards)
 	MetaProgress.record_run(won)
 	run_ended.emit(won)
+	game_over_requested.emit(won)
 
 
 func advance_room() -> void:
@@ -359,3 +394,12 @@ func get_room_difficulty() -> Dictionary:
 	if current_room_index < ROOM_DIFFICULTY.size():
 		return ROOM_DIFFICULTY[current_room_index]
 	return ROOM_DIFFICULTY[0]
+
+
+func get_village_difficulty() -> Dictionary:
+	if current_room_index <= 2:
+		return VILLAGE_DIFFICULTY["early"]
+	elif current_room_index <= 5:
+		return VILLAGE_DIFFICULTY["mid"]
+	else:
+		return VILLAGE_DIFFICULTY["late"]

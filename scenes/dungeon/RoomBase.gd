@@ -55,6 +55,7 @@ func _ready() -> void:
 	_spawn_hud()
 	_lock_doors()
 	RunManager.room_cleared.connect(_on_room_cleared)
+	RunManager.game_over_requested.connect(_on_game_over_requested)
 	SwarmManager.unit_count_changed.connect(_on_unit_count_changed)
 
 	if is_instance_valid(BoonManager):
@@ -75,6 +76,8 @@ func _ready() -> void:
 func _exit_tree() -> void:
 	if RunManager.room_cleared.is_connected(_on_room_cleared):
 		RunManager.room_cleared.disconnect(_on_room_cleared)
+	if RunManager.game_over_requested.is_connected(_on_game_over_requested):
+		RunManager.game_over_requested.disconnect(_on_game_over_requested)
 	if SwarmManager.unit_count_changed.is_connected(_on_unit_count_changed):
 		SwarmManager.unit_count_changed.disconnect(_on_unit_count_changed)
 	if SwarmManager.unit_registered.is_connected(_on_unit_registered_meta):
@@ -363,6 +366,12 @@ func _process(_delta: float) -> void:
 	if SwarmManager.units.is_empty() and SwarmManager.unit_count <= 0:
 		game_over_shown = true
 		RunManager.end_run(false)
+		_show_game_over()
+
+
+func _on_game_over_requested(won: bool) -> void:
+	if not game_over_shown:
+		game_over_shown = true
 		_show_game_over()
 
 

@@ -8,6 +8,7 @@ var NeutralVillagerScene := preload("res://scenes/entities/NeutralVillager.tscn"
 var ArcherVillagerScene := preload("res://scenes/entities/ArcherVillager.tscn")
 var MageVillagerScene := preload("res://scenes/entities/MageVillager.tscn")
 var CaravanScene := preload("res://scenes/entities/Caravan.tscn")
+var TallWallScene := preload("res://scenes/terrain/TallWall.tscn")
 var CaravanHunterMeleeScene := preload("res://scenes/entities/enemies/CaravanHunterMelee.tscn")
 var CaravanHunterRangedScene := preload("res://scenes/entities/enemies/CaravanHunter.tscn")
 var DireGruntRangedScene := preload("res://scenes/entities/enemies/DireGruntRanged.tscn")
@@ -86,7 +87,6 @@ func _ready() -> void:
 	_draw_path_line()
 	_spawn_buildings()
 	_spawn_caravan()
-	_add_building_obstacles()
 	game_camera.global_position = caravan_path[0]
 	
 	await get_tree().process_frame
@@ -340,25 +340,13 @@ func _on_caravan_destroyed() -> void:
 
 
 func _spawn_buildings() -> void:
-	var walls_node := $Walls
 	for i in building_positions.size():
 		var pos: Vector2 = building_positions[i]
 		var bsize: Vector2 = building_sizes[i]
 		
-		var visual := ColorRect.new()
-		visual.position = pos - bsize / 2.0
-		visual.size = bsize
-		visual.color = BUILDING_COLOR
-		visual.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		add_child(visual)
-		
-		_add_wall_body(walls_node, pos, bsize)
-
-
-func _add_building_obstacles() -> void:
-	var building_rects: Array[Rect2] = []
-	for i in building_positions.size():
-		var pos: Vector2 = building_positions[i]
-		var bsize: Vector2 = building_sizes[i]
-		building_rects.append(Rect2(pos - bsize / 2.0, bsize))
-	Pathfinder.add_obstacles(building_rects)
+		# Use TallWall for buildings - blocks movement and LOS
+		var building := TallWallScene.instantiate()
+		building.global_position = pos
+		building.wall_size = bsize
+		building.wall_color = BUILDING_COLOR
+		add_child(building)

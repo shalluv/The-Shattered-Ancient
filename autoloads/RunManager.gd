@@ -56,11 +56,7 @@ const MINIBOSS_SCENES: Array[String] = [
 ]
 
 const VILLAGE_SCENES: Array[String] = [
-	"res://scenes/dungeon/VillageDivided.tscn",
-	"res://scenes/dungeon/VillageContested.tscn", 
-	"res://scenes/dungeon/VillageGauntlet.tscn",
 	"res://scenes/dungeon/VillageCaravan.tscn",
-	"res://scenes/dungeon/VillageSacrifice.tscn",
 ]
 
 const BOSS_SCENES: Array[String] = [

@@ -30,6 +30,7 @@ mouse_filter = 2
 color = Color(1, 1, 1, 0.3)
 
 [node name="UnitVisual" type="ColorRect" parent="." unique_id=1104035277]
+mouse_filter = 2
 offset_left = -4.0
 offset_top = -4.0
 offset_right = 4.0

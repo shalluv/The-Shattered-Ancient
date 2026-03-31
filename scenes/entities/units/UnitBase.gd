@@ -67,10 +67,10 @@ func _exit_tree() -> void:
 
 
 func _physics_process(delta: float) -> void:
-	if unit_sprite and velocity.length_squared() > 1.0:
-		unit_sprite.rotation = velocity.angle() + PI / 2.0
 	if is_dying or is_reviving:
 		return
+	if unit_sprite and velocity.length_squared() > 1.0:
+		unit_sprite.rotation = velocity.angle() + PI / 2.0
 
 	var separation := _calculate_separation_force()
 

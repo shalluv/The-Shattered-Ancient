@@ -8,6 +8,8 @@ const SAFE_ZONE_COLOR: Color = Color("#1a3a1a")
 
 var SlowZoneScene := preload("res://scenes/terrain/SlowZone.tscn")
 var DamageZoneScene := preload("res://scenes/terrain/DamageZone.tscn")
+var TallWallScene := preload("res://scenes/terrain/TallWall.tscn")
+var ShortWallScene := preload("res://scenes/terrain/ShortWall.tscn")
 var NeutralVillagerScene := preload("res://scenes/entities/NeutralVillager.tscn")
 var ArcherVillagerScene := preload("res://scenes/entities/ArcherVillager.tscn")
 var MageVillagerScene := preload("res://scenes/entities/MageVillager.tscn")
@@ -151,36 +153,20 @@ func _spawn_terrain_zones() -> void:
 
 
 func _add_safe_zone_walls() -> void:
-	var walls_node := $Walls
+	# Left wall - TallWall to block LOS and movement
+	var left_wall := TallWallScene.instantiate()
+	left_wall.global_position = Vector2(safe_zone_pos.x - safe_zone_size.x / 2.0 - 20, safe_zone_pos.y)
+	left_wall.wall_size = Vector2(40, safe_zone_size.y)
+	add_child(left_wall)
 	
-	var left_wall_pos := Vector2(safe_zone_pos.x - safe_zone_size.x / 2.0 - 20, safe_zone_pos.y)
-	var right_wall_pos := Vector2(safe_zone_pos.x + safe_zone_size.x / 2.0 + 20, safe_zone_pos.y)
-	var wall_size := Vector2(40, safe_zone_size.y)
+	# Right wall - TallWall to block LOS and movement
+	var right_wall := TallWallScene.instantiate()
+	right_wall.global_position = Vector2(safe_zone_pos.x + safe_zone_size.x / 2.0 + 20, safe_zone_pos.y)
+	right_wall.wall_size = Vector2(40, safe_zone_size.y)
+	add_child(right_wall)
 	
-	_add_wall_body(walls_node, left_wall_pos, wall_size)
-	_add_wall_body(walls_node, right_wall_pos, wall_size)
-	
-	var left_visual := ColorRect.new()
-	left_visual.position = left_wall_pos - wall_size / 2.0
-	left_visual.size = wall_size
-	left_visual.color = BUILDING_COLOR
-	left_visual.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(left_visual)
-	
-	var right_visual := ColorRect.new()
-	right_visual.position = right_wall_pos - wall_size / 2.0
-	right_visual.size = wall_size
-	right_visual.color = BUILDING_COLOR
-	right_visual.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(right_visual)
-	
-	var bottom_wall_pos := Vector2(safe_zone_pos.x, safe_zone_pos.y + safe_zone_size.y / 2.0 + 4)
-	var bottom_wall_size := Vector2(safe_zone_size.x, 8)
-	_add_wall_body(walls_node, bottom_wall_pos, bottom_wall_size)
-	
-	var wall_rects: Array[Rect2] = [
-		Rect2(left_wall_pos - wall_size / 2.0, wall_size),
-		Rect2(right_wall_pos - wall_size / 2.0, wall_size),
-		Rect2(bottom_wall_pos - bottom_wall_size / 2.0, bottom_wall_size)
-	]
-	Pathfinder.add_obstacles(wall_rects)
+	# Bottom wall - TallWall to block LOS and movement
+	var bottom_wall := TallWallScene.instantiate()
+	bottom_wall.global_position = Vector2(safe_zone_pos.x, safe_zone_pos.y + safe_zone_size.y / 2.0 + 4)
+	bottom_wall.wall_size = Vector2(safe_zone_size.x, 8)
+	add_child(bottom_wall)

@@ -12,6 +12,7 @@ var sacrifice_time: float = BASE_SACRIFICE_TIME
 var rescue_timers: Array[float] = []
 
 var DamageZoneScene := preload("res://scenes/terrain/DamageZone.tscn")
+var ShortWallScene := preload("res://scenes/terrain/ShortWall.tscn")
 var NeutralVillagerScene := preload("res://scenes/entities/NeutralVillager.tscn")
 var MageVillagerScene := preload("res://scenes/entities/MageVillager.tscn")
 var PriestVillagerScene := preload("res://scenes/entities/PriestVillager.tscn")
@@ -226,20 +227,19 @@ func _hide_rescue_progress(idx: int) -> void:
 
 
 func _spawn_altars() -> void:
-	var walls_node := $Walls
-	
 	for i in altar_positions.size():
 		var pos: Vector2 = altar_positions[i]
 		var asize: Vector2 = altar_sizes[i]
 		
-		var altar_visual := ColorRect.new()
-		altar_visual.position = pos - asize / 2.0
-		altar_visual.size = asize
-		altar_visual.color = ALTAR_COLOR
-		altar_visual.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		altar_visual.add_to_group("altars")
-		add_child(altar_visual)
+		# Use ShortWall for altars - blocks movement but allows LOS
+		var altar := ShortWallScene.instantiate()
+		altar.global_position = pos
+		altar.wall_size = asize
+		altar.wall_color = ALTAR_COLOR
+		add_child(altar)
+		altar.add_to_group("altars")
 		
+		# Add glow effect
 		var glow := ColorRect.new()
 		glow.position = pos - asize / 2.0 - Vector2(4, 4)
 		glow.size = asize + Vector2(8, 8)
@@ -247,13 +247,6 @@ func _spawn_altars() -> void:
 		glow.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		glow.z_index = -1
 		add_child(glow)
-	
-	var altar_rects: Array[Rect2] = []
-	for i in altar_positions.size():
-		var pos: Vector2 = altar_positions[i]
-		var asize: Vector2 = altar_sizes[i]
-		altar_rects.append(Rect2(pos - asize / 2.0, asize))
-	Pathfinder.add_obstacles(altar_rects)
 
 
 func _spawn_damage_zone() -> void:

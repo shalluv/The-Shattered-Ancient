@@ -5,6 +5,7 @@ extends "res://scenes/dungeon/RoomMiniBoss.gd"
 
 var SlowZoneScene := preload("res://scenes/terrain/SlowZone.tscn")
 var DireHoundScene := preload("res://scenes/entities/enemies/DireHound.tscn")
+var TallWallScene := preload("res://scenes/terrain/TallWall.tscn")
 
 @onready var player_spawn: Marker2D = $PlayerSpawnPoint
 @onready var boss_spawn: Marker2D = $BossSpawnPoint
@@ -42,3 +43,12 @@ func _spawn_terrain_zones() -> void:
 	var slow_right := SlowZoneScene.instantiate()
 	slow_right.global_position = Vector2(774, 400)
 	add_child(slow_right)
+
+	# Tall walls narrowing the corridor on each side
+	var wall_left := TallWallScene.instantiate()
+	wall_left.global_position = Vector2(180, 300)
+	add_child(wall_left)
+
+	var wall_right := TallWallScene.instantiate()
+	wall_right.global_position = Vector2(844, 300)
+	add_child(wall_right)

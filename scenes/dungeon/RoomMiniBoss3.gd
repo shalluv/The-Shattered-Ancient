@@ -4,6 +4,7 @@ extends "res://scenes/dungeon/RoomMiniBoss.gd"
 ## Tactical fight — player must break the formation.
 
 var SpearwallGroupScene := preload("res://scenes/entities/enemies/SpearwallGroup.tscn")
+var TallWallScene := preload("res://scenes/terrain/TallWall.tscn")
 
 @onready var player_spawn: Marker2D = $PlayerSpawnPoint
 @onready var boss_spawn: Marker2D = $BossSpawnPoint
@@ -29,5 +30,8 @@ func _spawn_enemies() -> void:
 
 
 func _spawn_terrain_zones() -> void:
-	# No terrain — pure tactical fight
-	pass
+	# Central barrier wall — forces player to go around
+	var barrier := TallWallScene.instantiate()
+	barrier.wall_size = Vector2(30, 250)
+	barrier.global_position = Vector2(512, 400)
+	add_child(barrier)

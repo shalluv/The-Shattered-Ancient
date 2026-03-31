@@ -5,6 +5,7 @@ extends "res://scenes/dungeon/RoomMiniBoss.gd"
 
 var DamageZoneScene := preload("res://scenes/terrain/DamageZone.tscn")
 var DireHoundScene := preload("res://scenes/entities/enemies/DireHound.tscn")
+var ShortWallScene := preload("res://scenes/terrain/ShortWall.tscn")
 
 @onready var player_spawn: Marker2D = $PlayerSpawnPoint
 @onready var boss_spawn: Marker2D = $BossSpawnPoint
@@ -51,3 +52,12 @@ func _spawn_terrain_zones() -> void:
 	var damage_zone := DamageZoneScene.instantiate()
 	damage_zone.global_position = boss_spawn.global_position + Vector2(0, 80)
 	add_child(damage_zone)
+
+	# Two pillars for cover on each side
+	var pillar_left := ShortWallScene.instantiate()
+	pillar_left.global_position = Vector2(340, 400)
+	add_child(pillar_left)
+
+	var pillar_right := ShortWallScene.instantiate()
+	pillar_right.global_position = Vector2(684, 400)
+	add_child(pillar_right)

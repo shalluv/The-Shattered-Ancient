@@ -7,6 +7,7 @@ var DamageZoneScene := preload("res://scenes/terrain/DamageZone.tscn")
 var SlowZoneScene := preload("res://scenes/terrain/SlowZone.tscn")
 var DirePriestScene := preload("res://scenes/entities/enemies/DirePriest.tscn")
 var NeutralVillagerScene := preload("res://scenes/entities/NeutralVillager.tscn")
+var ShortWallScene := preload("res://scenes/terrain/ShortWall.tscn")
 
 @onready var player_spawn: Marker2D = $PlayerSpawnPoint
 @onready var boss_spawn: Marker2D = $BossSpawnPoint
@@ -59,3 +60,23 @@ func _spawn_terrain_zones() -> void:
 	var slow_zone := SlowZoneScene.instantiate()
 	slow_zone.global_position = Vector2(512, 450)
 	add_child(slow_zone)
+
+	# Central altar block
+	var altar := ShortWallScene.instantiate()
+	altar.wall_size = Vector2(80, 50)
+	altar.wall_color = Color("#2a1a2e")
+	altar.global_position = Vector2(512, 380)
+	add_child(altar)
+
+	# Two flanking ritual pillars
+	var pillar_left := ShortWallScene.instantiate()
+	pillar_left.wall_size = Vector2(30, 30)
+	pillar_left.wall_color = Color("#2a1a2e")
+	pillar_left.global_position = Vector2(392, 380)
+	add_child(pillar_left)
+
+	var pillar_right := ShortWallScene.instantiate()
+	pillar_right.wall_size = Vector2(30, 30)
+	pillar_right.wall_color = Color("#2a1a2e")
+	pillar_right.global_position = Vector2(632, 380)
+	add_child(pillar_right)

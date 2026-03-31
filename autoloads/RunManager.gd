@@ -36,6 +36,7 @@ var bonus_end_shards: int = 0
 var hero_boons: Dictionary = {}
 var map_data: MapData = null
 var current_node_index: int = 0
+var last_miniboss_scene: String = ""
 
 const COMBAT_SMALL_SCENES: Array[String] = [
 	"res://scenes/dungeon/CombatSmall1.tscn",
@@ -71,7 +72,15 @@ func get_combat_small_scene() -> String:
 
 
 func get_miniboss_scene() -> String:
-	return MINIBOSS_SCENES[randi() % MINIBOSS_SCENES.size()]
+	var pool: Array[String] = []
+	for scene in MINIBOSS_SCENES:
+		if scene != last_miniboss_scene:
+			pool.append(scene)
+	if pool.is_empty():
+		pool = MINIBOSS_SCENES.duplicate()
+	var picked: String = pool[randi() % pool.size()]
+	last_miniboss_scene = picked
+	return picked
 
 
 func start_run() -> void:
@@ -98,6 +107,7 @@ func start_run() -> void:
 	hero_boons = {}
 	map_data = null
 	current_node_index = 0
+	last_miniboss_scene = ""
 	SwarmManager.reset()
 	generate_new_map()
 

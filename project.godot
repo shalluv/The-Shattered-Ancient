@@ -26,6 +26,8 @@ BoonManager="*res://autoloads/BoonManager.gd"
 Pathfinder="*res://autoloads/Pathfinder.gd"
 SynergyManager="*res://autoloads/SynergyManager.gd"
 DebugManager="*res://autoloads/DebugManager.gd"
+SettingsManager="*res://autoloads/SettingsManager.gd"
+PauseMenu="*res://autoloads/PauseMenu.gd"
 
 [display]
 

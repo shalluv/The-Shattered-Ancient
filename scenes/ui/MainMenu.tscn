@@ -42,6 +42,10 @@ layout_mode = 2
 layout_mode = 2
 text = "Begin Run"
 
+[node name="SettingsButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Settings"
+
 [node name="QuitButton" type="Button" parent="VBoxContainer" unique_id=57409219]
 layout_mode = 2
 text = "Quit"

@@ -161,6 +161,13 @@ func _build_ui() -> void:
 	_style_button(upgrades_btn)
 	panel.add_child(upgrades_btn)
 
+	var settings_btn := Button.new()
+	settings_btn.text = "Settings"
+	settings_btn.custom_minimum_size = Vector2(200, 40)
+	settings_btn.pressed.connect(_on_settings_pressed)
+	_style_button(settings_btn)
+	panel.add_child(settings_btn)
+
 	var title_btn := Button.new()
 	title_btn.text = "Back to Title"
 	title_btn.custom_minimum_size = Vector2(200, 40)
@@ -184,6 +191,10 @@ func _on_begin_pressed() -> void:
 
 func _on_upgrades_pressed() -> void:
 	SceneTransition.transition_to("res://scenes/lobby/MetaUpgrades.tscn")
+
+
+func _on_settings_pressed() -> void:
+	SceneTransition.transition_to("res://scenes/ui/Settings.tscn")
 
 
 func _on_title_pressed() -> void:

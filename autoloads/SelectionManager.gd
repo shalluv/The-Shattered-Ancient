@@ -35,10 +35,26 @@ func _input(event: InputEvent) -> void:
 	elif event is InputEventMouseMotion and is_dragging:
 		drag_current_screen = event.position
 		overlay_control.queue_redraw()
-	elif event is InputEventKey and event.pressed and not event.echo:
-		_handle_key(event)
+
 	if event.is_action_pressed("select_all"):
 		_select_all_units()
+	if event.is_action_pressed("select_all_other"):
+		_select_all_other_units()
+	if event.is_action_pressed("next_unit"):
+		_cycle_unit(1)
+	if event.is_action_pressed("prev_unit"):
+		_cycle_unit(-1)
+
+	# Control groups: Ctrl+key assigns, key recalls
+	if event is InputEventKey and event.pressed and not event.echo:
+		for group_id in range(1, 10):
+			var action_name: String = "group_%d" % group_id
+			if event.is_action_pressed(action_name):
+				if event.ctrl_pressed:
+					_assign_control_group(group_id)
+				else:
+					_recall_control_group(group_id)
+				break
 
 
 func _handle_mouse_button(event: InputEventMouseButton) -> void:
@@ -170,20 +186,58 @@ func _select_all_units() -> void:
 			selected_units.append(unit)
 
 
+func _select_all_other_units() -> void:
+	var current := selected_units.duplicate()
+	_deselect_all()
+	var all_units: Array = SwarmManager.units.duplicate()
+	all_units.append_array(SwarmManager.reviving_units)
+	for unit in all_units:
+		if is_instance_valid(unit) and unit.has_method("select") and unit not in current:
+			unit.select()
+			selected_units.append(unit)
+
+
+func _cycle_unit(direction: int) -> void:
+	var all_units: Array = SwarmManager.units.duplicate()
+	all_units.append_array(SwarmManager.reviving_units)
+	# Remove invalid
+	var valid: Array[Node2D] = []
+	for u in all_units:
+		if is_instance_valid(u):
+			valid.append(u)
+	if valid.is_empty():
+		return
+
+	var current_index: int = -1
+	if selected_units.size() == 1:
+		current_index = valid.find(selected_units[0])
+
+	_deselect_all()
+	var next_index: int = 0
+	if current_index >= 0:
+		next_index = (current_index + direction) % valid.size()
+		if next_index < 0:
+			next_index += valid.size()
+
+	var unit := valid[next_index]
+	if unit.has_method("select"):
+		unit.select()
+		selected_units.append(unit)
+
+
 func _handle_key(event: InputEventKey) -> void:
-	var keycode := event.physical_keycode
-	if keycode >= KEY_1 and keycode <= KEY_9:
-		var group_id: int = keycode - KEY_0
-		if event.ctrl_pressed:
-			control_groups[group_id] = selected_units.duplicate()
-			var blueprint: Dictionary = {}
-			for unit in selected_units:
-				if is_instance_valid(unit) and unit.has_method("get_unit_type"):
-					var unit_type: String = unit.get_unit_type()
-					blueprint[unit_type] = blueprint.get(unit_type, 0) + 1
-			control_group_blueprints[group_id] = blueprint
-		else:
-			_recall_control_group(group_id)
+	# Legacy fallback — control groups now handled via InputMap actions in _input()
+	pass
+
+
+func _assign_control_group(group_id: int) -> void:
+	control_groups[group_id] = selected_units.duplicate()
+	var blueprint: Dictionary = {}
+	for unit in selected_units:
+		if is_instance_valid(unit) and unit.has_method("get_unit_type"):
+			var unit_type: String = unit.get_unit_type()
+			blueprint[unit_type] = blueprint.get(unit_type, 0) + 1
+	control_group_blueprints[group_id] = blueprint
 
 
 func _recall_control_group(group_id: int) -> void:

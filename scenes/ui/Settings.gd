@@ -42,7 +42,10 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _go_back() -> void:
 	if _is_standalone:
-		SceneTransition.transition_to("res://scenes/ui/MainMenu.tscn")
+		var target := SceneTransition.previous_scene_path
+		if target == "" or target == scene_file_path:
+			target = "res://scenes/ui/MainMenu.tscn"
+		SceneTransition.transition_to(target)
 	else:
 		settings_closed.emit()
 

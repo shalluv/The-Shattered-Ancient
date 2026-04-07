@@ -4,8 +4,8 @@ signal room_selected(room_type: String, node_index: int)
 
 const NODE_SIZE: float = 48.0
 const NODE_BORDER_SIZE: float = 52.0
-const VERTICAL_SPACING: float = 70.0
-const HORIZONTAL_SPACING: float = 160.0
+const VERTICAL_SPACING: float = 90.0
+const HORIZONTAL_SPACING: float = 180.0
 const TOP_MARGIN: float = 60.0
 const BOTTOM_MARGIN: float = 80.0
 
@@ -137,6 +137,7 @@ func _get_node_position(node: MapNodeData, center_x: float) -> Vector2:
 
 
 func _draw_connections(map: MapData, center_x: float) -> void:
+	var reachable: Array[int] = map.get_reachable_nodes()
 	for from_idx in map.connections:
 		var from_node := map.get_node_by_index(from_idx)
 		if not from_node:
@@ -152,8 +153,12 @@ func _draw_connections(map: MapData, center_x: float) -> void:
 			line.add_point(from_pos)
 			line.add_point(to_pos)
 
+			var is_active_path: bool = from_idx == map.player_node_index and to_idx in reachable
 			var is_traversed: bool = from_idx in map.visited_nodes and to_idx in map.visited_nodes
-			if is_traversed:
+			if is_active_path:
+				line.default_color = Color("#ffffff")
+				line.width = 4.0
+			elif is_traversed:
 				line.default_color = Color("#FFD700")
 				line.width = 3.0
 			else:

@@ -3,11 +3,12 @@
 importer="aseprite_wizard.plugin.static-texture"
 type="PortableCompressedTexture2D"
 uid="uid://jhfuls42jnfm"
-valid=false
+path="res://.godot/imported/archer.aseprite-5fddc93e0b19db35f7269e7baf689d97.res"
 
 [deps]
 
 source_file="res://art/units/archer/archer.aseprite"
+dest_files=["res://.godot/imported/archer.aseprite-5fddc93e0b19db35f7269e7baf689d97.res"]
 
 [params]
 

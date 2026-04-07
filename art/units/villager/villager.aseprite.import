@@ -3,11 +3,12 @@
 importer="aseprite_wizard.plugin.static-texture"
 type="PortableCompressedTexture2D"
 uid="uid://c1jh4i0ktcx77"
-valid=false
+path="res://.godot/imported/villager.aseprite-6a8bab0133876174ed562b7a24316dd4.res"
 
 [deps]
 
 source_file="res://art/units/villager/villager.aseprite"
+dest_files=["res://.godot/imported/villager.aseprite-6a8bab0133876174ed562b7a24316dd4.res"]
 
 [params]
 

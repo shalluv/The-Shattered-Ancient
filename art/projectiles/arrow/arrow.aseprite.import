@@ -3,11 +3,12 @@
 importer="aseprite_wizard.plugin.static-texture"
 type="PortableCompressedTexture2D"
 uid="uid://77y7b16l83oa"
-valid=false
+path="res://.godot/imported/arrow.aseprite-1083e68b60a4715cab908bb080c06bf5.res"
 
 [deps]
 
 source_file="res://art/projectiles/arrow/arrow.aseprite"
+dest_files=["res://.godot/imported/arrow.aseprite-1083e68b60a4715cab908bb080c06bf5.res"]
 
 [params]
 

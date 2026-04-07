@@ -3,11 +3,12 @@
 importer="aseprite_wizard.plugin.static-texture"
 type="PortableCompressedTexture2D"
 uid="uid://d263v00o8a032"
-valid=false
+path="res://.godot/imported/magic.aseprite-d137b3797ca29ea3e6014761e19c62ae.res"
 
 [deps]
 
 source_file="res://art/projectiles/magic/magic.aseprite"
+dest_files=["res://.godot/imported/magic.aseprite-d137b3797ca29ea3e6014761e19c62ae.res"]
 
 [params]
 

@@ -1,13 +1,16 @@
 extends Control
 
 @onready var begin_button: Button = $VBoxContainer/BeginButton
+@onready var settings_button: Button = $VBoxContainer/SettingsButton
 @onready var quit_button: Button = $VBoxContainer/QuitButton
 
 
 func _ready() -> void:
 	begin_button.pressed.connect(_on_begin_pressed)
+	settings_button.pressed.connect(_on_settings_pressed)
 	quit_button.pressed.connect(_on_quit_pressed)
 	_style_button(begin_button)
+	_style_button(settings_button)
 	_style_button(quit_button)
 	_setup_particles()
 	_setup_version_label()
@@ -58,6 +61,10 @@ func _setup_version_label() -> void:
 
 func _on_begin_pressed() -> void:
 	SceneTransition.transition_to("res://scenes/lobby/Lobby.tscn")
+
+
+func _on_settings_pressed() -> void:
+	SceneTransition.transition_to("res://scenes/ui/Settings.tscn")
 
 
 func _on_quit_pressed() -> void:

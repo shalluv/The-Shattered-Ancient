@@ -35,6 +35,7 @@ var selected_node_index: int = -1
 var node_controls: Dictionary = {}
 var line_nodes: Array = []
 var map_container: Control = null
+var ui_root: Control = null
 var enter_button: Button = null
 var room_name_label: Label = null
 var title_label: Label = null
@@ -50,66 +51,174 @@ func _ready() -> void:
 
 
 func _build_ui() -> void:
-	title_label = Label.new()
-	title_label.text = "CHOOSE YOUR PATH"
-	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title_label.add_theme_font_size_override("font_size", 28)
-	title_label.add_theme_color_override("font_color", Color("#FFD700"))
-	title_label.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	title_label.offset_top = 10
-	title_label.offset_bottom = 45
-	add_child(title_label)
+	ui_root = Control.new()
+	ui_root.set_anchors_preset(Control.PRESET_FULL_RECT)
+	ui_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(ui_root)
 
-	map_container = Control.new()
-	var map_height: float = TOP_MARGIN + (9 * VERTICAL_SPACING) + BOTTOM_MARGIN + 40
-	map_container.clip_contents = false
-	map_container.custom_minimum_size = Vector2(size.x, map_height)
-	map_container.size = Vector2(size.x, map_height)
+	# Header
+	var header := VBoxContainer.new()
+	header.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	header.offset_left = 40
+	header.offset_right = -40
+	header.offset_top = 16
+	header.offset_bottom = 120
+	header.alignment = BoxContainer.ALIGNMENT_CENTER
+	header.add_theme_constant_override("separation", 4)
+	header.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	ui_root.add_child(header)
+
+	title_label = Label.new()
+	title_label.text = "THE SHATTERED MAP"
+	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title_label.add_theme_color_override("font_color", Color(1.0, 0.94, 0.70, 1.0))
+	title_label.add_theme_font_size_override("font_size", 34)
+	title_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	header.add_child(title_label)
+
+	var subtitle := Label.new()
+	subtitle.text = "Choose your next path through the run"
+	subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	subtitle.add_theme_color_override("font_color", Color(0.72, 0.74, 0.82, 0.9))
+	subtitle.add_theme_font_size_override("font_size", 16)
+	subtitle.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	header.add_child(subtitle)
+
+	# Map panel
+	var map_panel := PanelContainer.new()
+	map_panel.set_anchors_preset(Control.PRESET_FULL_RECT)
+	map_panel.offset_left = 30
+	map_panel.offset_right = -30
+	map_panel.offset_top = 110
+	map_panel.offset_bottom = -150
+	var panel_style := StyleBoxFlat.new()
+	panel_style.bg_color = Color(0.07, 0.10, 0.16, 0.88)
+	panel_style.border_color = Color(0.75, 0.65, 0.38, 0.35)
+	panel_style.border_width_top = 1
+	panel_style.border_width_bottom = 1
+	panel_style.border_width_left = 1
+	panel_style.border_width_right = 1
+	panel_style.set_corner_radius_all(10)
+	panel_style.set_content_margin_all(12)
+	map_panel.add_theme_stylebox_override("panel", panel_style)
+	ui_root.add_child(map_panel)
 
 	var scroll := ScrollContainer.new()
-	scroll.set_anchors_preset(Control.PRESET_FULL_RECT)
-	scroll.offset_top = 50
-	scroll.offset_bottom = -90
-	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	scroll.name = "MapScroll"
-	add_child(scroll)
+	scroll.set_anchors_preset(Control.PRESET_FULL_RECT)
+	scroll.offset_left = 0
+	scroll.offset_right = 0
+	scroll.offset_top = 0
+	scroll.offset_bottom = 0
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+	map_panel.add_child(scroll)
+
+	map_container = Control.new()
+	map_container.clip_contents = false
+	var viewport_width: float = max(get_viewport_rect().size.x, 1024.0)
+	var map_width: float = max(viewport_width - 120.0, 520.0)
+	var map_height: float = TOP_MARGIN + (9 * VERTICAL_SPACING) + BOTTOM_MARGIN + 40
+	map_container.custom_minimum_size = Vector2(map_width, map_height)
+	map_container.size = Vector2(map_width, map_height)
 	scroll.add_child(map_container)
 
+	# Legend panel
+	var legend_panel := PanelContainer.new()
+	legend_panel.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+	legend_panel.offset_left = -300
+	legend_panel.offset_right = -40
+	legend_panel.offset_top = 120
+	legend_panel.offset_bottom = 260
+	var legend_style := StyleBoxFlat.new()
+	legend_style.bg_color = Color(0.08, 0.10, 0.14, 0.92)
+	legend_style.border_color = Color(0.60, 0.55, 0.35, 0.4)
+	legend_style.border_width_top = 1
+	legend_style.border_width_bottom = 1
+	legend_style.border_width_left = 1
+	legend_style.border_width_right = 1
+	legend_style.set_corner_radius_all(8)
+	legend_style.set_content_margin_all(12)
+	legend_panel.add_theme_stylebox_override("panel", legend_style)
+	ui_root.add_child(legend_panel)
+
+	var legend_vbox := VBoxContainer.new()
+	legend_vbox.set_anchors_preset(Control.PRESET_FULL_RECT)
+	legend_vbox.add_theme_constant_override("separation", 6)
+	legend_panel.add_child(legend_vbox)
+
+	var legend_title := Label.new()
+	legend_title.text = "Room"
+	legend_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	legend_title.add_theme_color_override("font_color", Color(0.97, 0.92, 0.68, 1.0))
+	legend_title.add_theme_font_size_override("font_size", 16)
+	legend_vbox.add_child(legend_title)
+
+	var legend_order := ["start", "combat_small", "combat_medium", "village", "hero_room", "shop", "mini_boss", "boss"]
+	for room_type in legend_order:
+		var legend_line := Label.new()
+		legend_line.text = "%s : %s" % [ROOM_LABELS.get(room_type, "?"), room_type.capitalize().replace("_", " ")]
+		legend_line.add_theme_color_override("font_color", Color(0.88, 0.86, 0.78, 0.92))
+		legend_line.add_theme_font_size_override("font_size", 13)
+		legend_vbox.add_child(legend_line)
+
+	# Bottom panel
 	var bottom_panel := Control.new()
 	bottom_panel.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
-	bottom_panel.offset_top = -85
+	bottom_panel.offset_left = 30
+	bottom_panel.offset_right = -30
+	bottom_panel.offset_top = -140
+	bottom_panel.offset_bottom = -20
 	add_child(bottom_panel)
 
 	var bottom_bg := ColorRect.new()
 	bottom_bg.set_anchors_preset(Control.PRESET_FULL_RECT)
-	bottom_bg.color = Color(0.05, 0.08, 0.05, 0.9)
+	bottom_bg.color = Color(0.04, 0.06, 0.08, 0.88)
 	bottom_panel.add_child(bottom_bg)
 
+	var bottom_hbox := HBoxContainer.new()
+	bottom_hbox.set_anchors_preset(Control.PRESET_FULL_RECT)
+	bottom_hbox.offset_left = 20
+	bottom_hbox.offset_right = -20
+	bottom_hbox.offset_top = 20
+	bottom_hbox.offset_bottom = -20
+	bottom_hbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	bottom_hbox.add_theme_constant_override("separation", 18)
+	bottom_panel.add_child(bottom_hbox)
+
+	var info_vbox := VBoxContainer.new()
+	info_vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	info_vbox.add_theme_constant_override("separation", 6)
+	bottom_hbox.add_child(info_vbox)
+
 	room_name_label = Label.new()
-	room_name_label.text = ""
-	room_name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	room_name_label.add_theme_font_size_override("font_size", 20)
-	room_name_label.add_theme_color_override("font_color", Color(0.94, 0.92, 0.84))
-	room_name_label.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	room_name_label.offset_top = 8
-	room_name_label.offset_bottom = 35
-	bottom_panel.add_child(room_name_label)
+	room_name_label.text = "Select a reachable room to continue"
+	room_name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	room_name_label.add_theme_font_size_override("font_size", 18)
+	room_name_label.add_theme_color_override("font_color", Color(0.93, 0.92, 0.82, 1.0))
+	info_vbox.add_child(room_name_label)
+
+	var hint_label := Label.new()
+	hint_label.text = "Only highlighted paths are available. Click to preview."
+	hint_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	hint_label.add_theme_font_size_override("font_size", 14)
+	hint_label.add_theme_color_override("font_color", Color(0.72, 0.74, 0.78, 0.9))
+	info_vbox.add_child(hint_label)
 
 	enter_button = Button.new()
 	enter_button.text = "ENTER ROOM"
-	enter_button.custom_minimum_size = Vector2(200, 40)
-	enter_button.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
-	enter_button.offset_top = -50
-	enter_button.offset_bottom = -10
-	enter_button.offset_left = -100
-	enter_button.offset_right = 100
+	enter_button.custom_minimum_size = Vector2(200, 46)
 	enter_button.visible = false
 	enter_button.pressed.connect(_on_enter_pressed)
 	_style_button(enter_button)
-	bottom_panel.add_child(enter_button)
+	bottom_hbox.add_child(enter_button)
 
 
 func _render_map() -> void:
+	selected_node_index = -1
+	room_name_label.text = "Select a reachable room to continue"
+	enter_button.visible = false
+
 	for child in line_nodes:
 		if is_instance_valid(child):
 			child.queue_free()
@@ -120,7 +229,7 @@ func _render_map() -> void:
 	if not map:
 		return
 
-	var center_x: float = size.x / 2.0
+	var center_x: float = map_container.custom_minimum_size.x / 2.0
 
 	_draw_connections(map, center_x)
 
@@ -408,25 +517,33 @@ func _scroll_to_current() -> void:
 
 func _style_button(button: Button) -> void:
 	var normal := StyleBoxFlat.new()
-	normal.bg_color = Color(0.15, 0.15, 0.2)
-	normal.border_color = Color(0.3, 0.3, 0.4)
+	normal.bg_color = Color(0.14, 0.13, 0.18, 0.92)
+	normal.border_color = Color(0.62, 0.54, 0.32, 0.75)
 	normal.set_border_width_all(1)
-	normal.set_corner_radius_all(4)
+	normal.set_corner_radius_all(6)
+	normal.set_content_margin_all(10)
 	button.add_theme_stylebox_override("normal", normal)
 
 	var hover := StyleBoxFlat.new()
-	hover.bg_color = Color(0.25, 0.25, 0.35)
-	hover.border_color = Color(0.5, 0.5, 0.6)
+	hover.bg_color = Color(0.22, 0.20, 0.28, 0.96)
+	hover.border_color = Color(0.86, 0.75, 0.42, 0.95)
 	hover.set_border_width_all(1)
-	hover.set_corner_radius_all(4)
+	hover.set_corner_radius_all(6)
+	hover.set_content_margin_all(10)
 	button.add_theme_stylebox_override("hover", hover)
 
 	var pressed := StyleBoxFlat.new()
-	pressed.bg_color = Color(0.25, 0.25, 0.35)
-	pressed.border_color = Color(0.5, 0.5, 0.6)
+	pressed.bg_color = Color(0.18, 0.16, 0.23, 0.96)
+	pressed.border_color = Color(0.95, 0.80, 0.40, 0.95)
 	pressed.set_border_width_all(1)
-	pressed.set_corner_radius_all(4)
+	pressed.set_corner_radius_all(6)
+	pressed.set_content_margin_all(10)
 	button.add_theme_stylebox_override("pressed", pressed)
+
+	button.add_theme_color_override("font_color", Color(0.95, 0.90, 0.70, 1.0))
+	button.add_theme_color_override("font_hover_color", Color(1.0, 0.96, 0.82, 1.0))
+	button.add_theme_color_override("font_pressed_color", Color(0.96, 0.88, 0.64, 1.0))
+	button.add_theme_font_size_override("font_size", 16)
 
 
 func _unhandled_input(event: InputEvent) -> void:

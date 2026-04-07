@@ -78,7 +78,7 @@ func _try_generate() -> MapData:
 			if not _hero_available():
 				exclude.append("hero_room")
 			node.room_type = _pick_room_type(row, exclude)
-			node.offset = Vector2(randf_range(-10, 10), randf_range(-15, 15))
+			node.offset = Vector2(randf_range(-6, 6), randf_range(-10, 10))
 			if node.room_type == "hero_room":
 				node.room_data = _assign_hero()
 			if node.room_type == "shop" and not MetaProgress.has_upgrade("unlock_shop"):

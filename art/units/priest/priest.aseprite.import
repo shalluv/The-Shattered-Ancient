@@ -3,12 +3,11 @@
 importer="aseprite_wizard.plugin.static-texture"
 type="PortableCompressedTexture2D"
 uid="uid://cfsebmvnvafao"
-path="res://.godot/imported/priest.aseprite-1cee490f30dc632241c91298e4012fb9.res"
+valid=false
 
 [deps]
 
 source_file="res://art/units/priest/priest.aseprite"
-dest_files=["res://.godot/imported/priest.aseprite-1cee490f30dc632241c91298e4012fb9.res"]
 
 [params]
 

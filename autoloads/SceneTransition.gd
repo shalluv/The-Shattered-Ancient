@@ -6,6 +6,7 @@ signal transition_finished
 var overlay_layer: CanvasLayer = null
 var overlay_rect: ColorRect = null
 var is_transitioning: bool = false
+var previous_scene_path: String = ""
 
 
 func _ready() -> void:
@@ -24,6 +25,10 @@ func transition_to(scene_path: String) -> void:
 	if is_transitioning:
 		return
 	is_transitioning = true
+
+	var current := get_tree().current_scene
+	if current:
+		previous_scene_path = current.scene_file_path
 
 	var tween := create_tween()
 	tween.tween_property(overlay_rect, "color:a", 1.0, 0.3)

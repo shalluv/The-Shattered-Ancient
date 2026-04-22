@@ -16,6 +16,8 @@ func _ready() -> void:
 
 
 func _on_room_cleared() -> void:
+	AudioManager.play_sfx("room_clear")
+	AudioManager.stop_bgm()
 	if captain_defeated_flag:
 		_show_reward()
 

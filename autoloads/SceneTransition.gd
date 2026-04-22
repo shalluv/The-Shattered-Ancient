@@ -20,6 +20,15 @@ func _ready() -> void:
 	overlay_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	overlay_layer.add_child(overlay_rect)
 
+	# Start BGM for the initial scene (MainMenu)
+	call_deferred("_start_initial_bgm")
+
+
+func _start_initial_bgm() -> void:
+	var scene := get_tree().current_scene
+	if scene and is_instance_valid(AudioManager):
+		AudioManager.update_bgm_for_scene(scene.name)
+
 
 func transition_to(scene_path: String) -> void:
 	if is_transitioning:
@@ -40,6 +49,11 @@ func transition_to(scene_path: String) -> void:
 	get_tree().change_scene_to_file(scene_path)
 
 	await get_tree().process_frame
+
+	# Extract scene name from path (e.g. "res://scenes/lobby/Lobby.tscn" → "Lobby")
+	var scene_name := scene_path.get_file().get_basename()
+	if is_instance_valid(AudioManager):
+		AudioManager.update_bgm_for_scene(scene_name)
 
 	var fade_in := create_tween()
 	fade_in.tween_property(overlay_rect, "color:a", 0.0, 0.3)

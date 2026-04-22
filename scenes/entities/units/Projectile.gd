@@ -38,6 +38,7 @@ func _on_body_entered(body: Node2D) -> void:
 		if pierces and pierce_count < 1:
 			pierce_count += 1
 			return
+		AudioManager.play_sfx("projectile_hit")
 		$ImpactParticles.emitting = true
 		$ProjectileVisual.visible = false
 		set_physics_process(false)

@@ -110,6 +110,7 @@ func _fire_projectile(target: Node2D) -> void:
 			projectile.pierces = true
 
 		get_parent().add_child(projectile)
+		AudioManager.play_sfx("projectile_fire")
 
 
 func _play_volley_flash() -> void:

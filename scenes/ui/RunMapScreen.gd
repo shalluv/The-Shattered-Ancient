@@ -210,6 +210,12 @@ func _build_ui() -> void:
 	enter_button.custom_minimum_size = Vector2(200, 46)
 	enter_button.visible = false
 	enter_button.pressed.connect(_on_enter_pressed)
+	enter_button.button_down.connect(func() -> void:
+		if not enter_button.disabled: AudioManager.play_sfx("ui_click")
+	)
+	enter_button.mouse_entered.connect(func() -> void:
+		if not enter_button.disabled: AudioManager.play_sfx("ui_hover")
+	)
 	_style_button(enter_button)
 	bottom_hbox.add_child(enter_button)
 
@@ -411,6 +417,7 @@ func _on_node_hover(idx: int, entered: bool) -> void:
 
 	var container: Control = node_controls[idx]
 	if entered and idx != selected_node_index:
+		AudioManager.play_sfx("ui_hover")
 		container.modulate.a = 0.9
 		container.scale = Vector2(1.08, 1.08)
 		container.pivot_offset = Vector2(NODE_SIZE / 2.0, NODE_SIZE / 2.0)
@@ -422,6 +429,8 @@ func _on_node_hover(idx: int, entered: bool) -> void:
 func _select_node(idx: int) -> void:
 	if selected_node_index == idx:
 		return
+
+	AudioManager.play_sfx("ui_click")
 
 	if selected_node_index >= 0 and node_controls.has(selected_node_index):
 		var old: Control = node_controls[selected_node_index]

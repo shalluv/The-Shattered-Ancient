@@ -1,6 +1,7 @@
-[gd_scene format=3 uid="uid://ceepjhhxjyvnk"]
+[gd_scene load_steps=4 format=3 uid="uid://ceepjhhxjyvnk"]
 
 [ext_resource type="Script" path="res://scenes/entities/enemies/DireCaptain.gd" id="1_captain"]
+[ext_resource type="Texture2D" path="res://art/enemies/dire_captain.png" id="2_tex"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_captain"]
 radius = 20.0
@@ -15,19 +16,14 @@ script = ExtResource("1_captain")
 enemy_hp = 12
 move_speed = 100.0
 damage = 2
-enemy_color = Color(0.545, 0.0, 0.0, 1.0)
+enemy_color = Color(1, 1, 1, 1)
 
 [node name="PhysicsCollision" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_captain_physics")
 
-[node name="EnemyVisual" type="ColorRect" parent="."]
-# TODO: Replace with DireCaptain enemy art asset
-mouse_filter = 2
-offset_left = -14.0
-offset_top = -14.0
-offset_right = 14.0
-offset_bottom = 14.0
-color = Color(0.545, 0.0, 0.0, 1.0)
+[node name="EnemyVisual" type="Sprite2D" parent="."]
+texture = ExtResource("2_tex")
+scale = Vector2(0.056, 0.056)
 
 [node name="HitboxArea" type="Area2D" parent="."]
 collision_layer = 2

@@ -16,9 +16,8 @@ func _ready() -> void:
 	enemy_hp = GRUNT_HP
 	move_speed = GRUNT_SPEED
 	damage = GRUNT_DAMAGE
-	enemy_color = GRUNT_COLOR
+	enemy_color = Color.WHITE
 	super._ready()
-	enemy_visual.color = GRUNT_COLOR
 
 
 func _physics_process(delta: float) -> void:
@@ -33,6 +32,7 @@ func _physics_process(delta: float) -> void:
 		velocity = separation
 		if velocity.length_squared() > 0.1:
 			move_and_slide()
+		_update_facing()
 		return
 
 	var target := _find_nearest_unit()
@@ -40,6 +40,7 @@ func _physics_process(delta: float) -> void:
 		velocity = separation
 		if velocity.length_squared() > 0.1:
 			move_and_slide()
+		_update_facing()
 		return
 
 	var direction := global_position.direction_to(target.global_position)
@@ -62,6 +63,7 @@ func _physics_process(delta: float) -> void:
 			velocity = direction * effective_speed + separation
 	
 	move_and_slide()
+	_update_facing()
 
 
 func _shoot_target(target: Node2D) -> void:
@@ -98,5 +100,5 @@ func _on_projectile_hit(projectile_container: Node2D, target: Node2D) -> void:
 
 func _play_attack_effect() -> void:
 	var tween := create_tween()
-	tween.tween_property(enemy_visual, "color", Color.ORANGE, 0.1)
-	tween.tween_property(enemy_visual, "color", GRUNT_COLOR, 0.1)
+	tween.tween_property(enemy_visual, "modulate", Color.ORANGE, 0.1)
+	tween.tween_property(enemy_visual, "modulate", Color.WHITE, 0.1)

@@ -79,6 +79,7 @@ func _physics_process(delta: float) -> void:
 		velocity = separation
 		if velocity.length_squared() > 0.1:
 			move_and_slide()
+		_update_facing()
 		return
 
 	var nearest_unit := _find_nearest_unit()
@@ -86,6 +87,7 @@ func _physics_process(delta: float) -> void:
 		velocity = separation
 		if velocity.length_squared() > 0.1:
 			move_and_slide()
+		_update_facing()
 		return
 
 	var direction := global_position.direction_to(nearest_unit.global_position)
@@ -114,6 +116,7 @@ func _physics_process(delta: float) -> void:
 				if not _follow_path_enemy(effective_speed, separation):
 					velocity = direction * effective_speed + separation
 	move_and_slide()
+	_update_facing()
 
 
 func _deal_contact_damage(unit: Node2D) -> void:
@@ -133,7 +136,7 @@ func _trigger_enrage() -> void:
 	is_enraged = true
 
 	var tween := create_tween()
-	tween.tween_property(enemy_visual, "color", Color(1.0, 0.0, 0.0), 0.3)
+	tween.tween_property(enemy_visual, "modulate", Color(1.0, 0.0, 0.0), 0.3)
 
 	move_speed *= ENRAGE_SPEED_MULT
 

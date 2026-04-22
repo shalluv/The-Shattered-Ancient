@@ -21,7 +21,44 @@ offset_left = -4.0
 offset_top = -4.0
 offset_right = 4.0
 offset_bottom = 4.0
-color = Color(0.48, 0.42, 0.55, 1.0)
+color = Color(0.48, 0.42, 0.55, 0.0)
+
+[node name="Robe" type="Polygon2D" parent="VillagerVisual"]
+color = Color(0.32, 0.28, 0.42, 1)
+polygon = PackedVector2Array(1, 4, 3, 3, 5, 3, 7, 4, 7, 7, 1, 7)
+
+[node name="Hat" type="Polygon2D" parent="VillagerVisual"]
+color = Color(0.2, 0.15, 0.3, 1)
+polygon = PackedVector2Array(2, 3, 4, -3, 6, 3)
+
+[node name="HatBrim" type="Polygon2D" parent="VillagerVisual"]
+color = Color(0.15, 0.1, 0.22, 1)
+polygon = PackedVector2Array(1, 3, 7, 3, 6, 4, 2, 4)
+
+[node name="Staff" type="Polygon2D" parent="VillagerVisual"]
+color = Color(0.3, 0.18, 0.1, 1)
+polygon = PackedVector2Array(0, 2, 1, 2, 1, 7, 0, 7)
+
+[node name="Orb" type="ColorRect" parent="VillagerVisual"]
+offset_left = -1.0
+offset_top = 0.0
+offset_right = 2.0
+offset_bottom = 3.0
+color = Color(0.8, 0.5, 1, 1)
+
+[node name="OrbCore" type="ColorRect" parent="VillagerVisual"]
+offset_left = 0.0
+offset_top = 1.0
+offset_right = 1.0
+offset_bottom = 2.0
+color = Color(1, 0.9, 1, 1)
+
+[node name="Eye" type="ColorRect" parent="VillagerVisual"]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 5.0
+offset_bottom = 5.0
+color = Color(0.9, 0.7, 1, 1)
 
 [node name="DeathParticles" type="GPUParticles2D" parent="."]
 emitting = false

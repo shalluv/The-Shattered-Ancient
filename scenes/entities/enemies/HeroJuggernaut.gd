@@ -27,6 +27,10 @@ func _get_hero_color() -> Color:
 	return Color("#FF6B00")
 
 
+func _should_update_facing() -> bool:
+	return not is_spinning
+
+
 func _physics_process(delta: float) -> void:
 	if is_dying or not physics_enabled:
 		return
@@ -51,8 +55,8 @@ func _start_bladefury() -> void:
 	add_child(windup_particles)
 
 	var tw := create_tween()
-	tw.tween_property(enemy_visual, "color", Color.WHITE, BLADEFURY_WINDUP * 0.5)
-	tw.tween_property(enemy_visual, "color", _get_hero_color(), BLADEFURY_WINDUP * 0.5)
+	tw.tween_property(enemy_visual, "modulate", Color(5.0, 5.0, 5.0, 1.0), BLADEFURY_WINDUP * 0.5)
+	tw.tween_property(enemy_visual, "modulate", _get_hero_color(), BLADEFURY_WINDUP * 0.5)
 	tw.tween_callback(func() -> void:
 		windup_particles.queue_free()
 		is_spinning = true

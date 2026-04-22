@@ -1,6 +1,7 @@
-[gd_scene format=3 uid="uid://hero_omniknight_001"]
+[gd_scene load_steps=4 format=3 uid="uid://hero_omniknight_001"]
 
 [ext_resource type="Script" path="res://scenes/entities/enemies/HeroOmniknight.gd" id="1_omni"]
+[ext_resource type="Texture2D" path="res://art/enemies/hero_omniknight.png" id="2_tex"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_omni_physics"]
 radius = 12.0
@@ -16,13 +17,9 @@ script = ExtResource("1_omni")
 [node name="PhysicsCollision" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_omni_physics")
 
-[node name="EnemyVisual" type="ColorRect" parent="."]
-# TODO: Replace with Omniknight art asset
-offset_left = -10.0
-offset_top = -10.0
-offset_right = 10.0
-offset_bottom = 10.0
-color = Color(1, 0.98, 0.8, 1)
+[node name="EnemyVisual" type="Sprite2D" parent="."]
+texture = ExtResource("2_tex")
+scale = Vector2(0.04, 0.04)
 
 [node name="HitboxArea" type="Area2D" parent="."]
 collision_layer = 2

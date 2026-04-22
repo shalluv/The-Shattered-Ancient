@@ -35,11 +35,11 @@ func _start_purification() -> void:
 	add_child(windup_particles)
 
 	var tw := create_tween()
-	tw.tween_property(enemy_visual, "color", Color.WHITE, PURIFICATION_WINDUP)
+	tw.tween_property(enemy_visual, "modulate", Color(5.0, 5.0, 5.0, 1.0), PURIFICATION_WINDUP)
 	tw.tween_callback(func() -> void:
 		windup_particles.queue_free()
 		_execute_purification()
-		enemy_visual.color = _get_hero_color()
+		enemy_visual.modulate = _get_hero_color()
 	)
 
 
@@ -137,8 +137,8 @@ func take_hit(amount: int, from_mage: bool = false) -> void:
 
 func _flash_immune() -> void:
 	var tw := create_tween()
-	tw.tween_property(enemy_visual, "color", Color(0.8, 0.8, 1.0), 0.05)
-	tw.tween_property(enemy_visual, "color", _get_hero_color(), 0.1)
+	tw.tween_property(enemy_visual, "modulate", Color(0.8, 0.8, 1.0), 0.05)
+	tw.tween_property(enemy_visual, "modulate", _get_hero_color(), 0.1)
 
 
 func _create_windup_particles() -> GPUParticles2D:

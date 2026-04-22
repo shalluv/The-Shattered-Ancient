@@ -100,9 +100,9 @@ func _start_multishot() -> void:
 	var base_dir := global_position.direction_to(nearest.global_position)
 
 	var tw := create_tween()
-	tw.tween_property(enemy_visual, "color", Color.WHITE, MULTISHOT_WINDUP)
+	tw.tween_property(enemy_visual, "modulate", Color(5.0, 5.0, 5.0, 1.0), MULTISHOT_WINDUP)
 	tw.tween_callback(func() -> void:
-		enemy_visual.color = _get_hero_color()
+		enemy_visual.modulate = _get_hero_color()
 		_fire_multishot_volley(base_dir)
 	)
 

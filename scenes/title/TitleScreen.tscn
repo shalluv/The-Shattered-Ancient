@@ -1,0 +1,45 @@
+[gd_scene format=3 uid="uid://dxmjjyd0had4y"]
+
+[ext_resource type="Script" uid="uid://co8w5u7a3cakh" path="res://scenes/title/TitleScreen.gd" id="1_titlescreen"]
+[ext_resource type="Texture2D" uid="uid://chn8npimug08b" path="res://scenes/title/background.png" id="2_431gp"]
+
+[node name="TitleScreen" type="Control" unique_id=333622666]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+script = ExtResource("1_titlescreen")
+
+[node name="Background" type="TextureRect" parent="." unique_id=622194723]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2_431gp")
+expand_mode = 2
+
+[node name="Prompt" type="Label" parent="." unique_id=1569421125]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -300.0
+offset_top = -190.0
+offset_right = 300.0
+offset_bottom = -150.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.91764706, 0.92941177, 0.8901961, 0.5803922)
+theme_override_font_sizes/font_size = 22
+text = "Press any button to continue"
+horizontal_alignment = 1
+vertical_alignment = 1
+mouse_filter = 2

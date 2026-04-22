@@ -1,22 +1,31 @@
 extends Control
 
-## Dota 2-style hotkey settings screen.
-## Emits settings_closed when the player wants to go back.
+## Hotkey settings screen. Used standalone (from the Lobby) and embedded
+## inside the in-game pause menu. Standalone mode shows the full mystic
+## background; embedded mode uses a subtle dark backdrop so the gameplay
+## stays visible behind the pause menu.
 
 signal settings_closed
 
+const MysticBackground = preload("res://scenes/ui/MysticBackground.gd")
+
+const GOLD := Color(0.85, 0.7, 0.3, 1.0)
+const GOLD_BRIGHT := Color(1.0, 0.92, 0.65, 1.0)
+const GOLD_SOFT := Color(0.78, 0.74, 0.60, 1.0)
+const PARCHMENT := Color(0.94, 0.92, 0.84, 1.0)
+const PANEL_DARK := Color(0.08, 0.09, 0.12, 0.92)
+
 var _listening_action: String = ""
 var _listening_badge: Button = null
-var _badges: Dictionary = {} # action -> Button
-var _row_panels: Dictionary = {} # action -> PanelContainer
+var _badges: Dictionary = {}
+var _row_panels: Dictionary = {}
 var _is_standalone: bool = false
-
-var _hotkey_content: VBoxContainer = null
-var _audio_content: VBoxContainer = null
+var _ui_root: Control = null
 var _hotkey_tab_btn: Button = null
 var _audio_tab_btn: Button = null
-var _hotkey_footer: HBoxContainer = null
-var _sliders: Dictionary = {} # bus_name -> HSlider
+var _hotkey_scroll: ScrollContainer = null
+var _audio_content: VBoxContainer = null
+var _sliders: Dictionary = {}
 
 
 func _ready() -> void:
@@ -24,6 +33,7 @@ func _ready() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	_is_standalone = (get_parent() == get_tree().root or get_parent() == get_tree().current_scene)
 	_build_ui()
+	_animate_fade_in()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -51,7 +61,7 @@ func _go_back() -> void:
 	if _is_standalone:
 		var target := SceneTransition.previous_scene_path
 		if target == "" or target == scene_file_path:
-			target = "res://scenes/ui/MainMenu.tscn"
+			target = "res://scenes/lobby/Lobby.tscn"
 		SceneTransition.transition_to(target)
 	else:
 		settings_closed.emit()
@@ -60,154 +70,197 @@ func _go_back() -> void:
 # ── Build the full UI ───────────────────────────────────────
 
 func _build_ui() -> void:
-	var bg := ColorRect.new()
-	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
-	bg.color = Color(0.06, 0.07, 0.09, 0.97)
-	add_child(bg)
+	_build_background()
 
-	var margin := MarginContainer.new()
-	margin.set_anchors_preset(Control.PRESET_FULL_RECT)
-	margin.add_theme_constant_override("margin_left", 60)
-	margin.add_theme_constant_override("margin_right", 60)
-	margin.add_theme_constant_override("margin_top", 40)
-	margin.add_theme_constant_override("margin_bottom", 40)
-	add_child(margin)
+	_ui_root = Control.new()
+	_ui_root.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_ui_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_ui_root)
 
-	var outer_vbox := VBoxContainer.new()
-	outer_vbox.add_theme_constant_override("separation", 12)
-	margin.add_child(outer_vbox)
+	if _is_standalone:
+		_build_title()
 
-	# Header
-	var header := HBoxContainer.new()
-	header.add_theme_constant_override("separation", 0)
-	outer_vbox.add_child(header)
+	_build_main_panel()
+	_build_button_bar()
+
+
+func _build_background() -> void:
+	if _is_standalone:
+		var bg := MysticBackground.new()
+		bg.show_rune_circle = false
+		add_child(bg)
+	else:
+		var bg := ColorRect.new()
+		bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+		bg.color = Color(0.04, 0.05, 0.08, 0.92)
+		add_child(bg)
+
+
+func _build_title() -> void:
+	var title_container := VBoxContainer.new()
+	title_container.set_anchors_preset(Control.PRESET_CENTER_TOP)
+	title_container.offset_left = -400
+	title_container.offset_right = 400
+	title_container.offset_top = 30
+	title_container.offset_bottom = 140
+	title_container.alignment = BoxContainer.ALIGNMENT_CENTER
+	title_container.add_theme_constant_override("separation", 4)
+	title_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_ui_root.add_child(title_container)
+
+	var kicker := Label.new()
+	kicker.text = "— A T T U N E M E N T —"
+	kicker.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	kicker.add_theme_color_override("font_color", Color(0.7, 0.65, 0.50, 0.7))
+	kicker.add_theme_font_size_override("font_size", 16)
+	kicker.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	title_container.add_child(kicker)
 
 	var title := Label.new()
-	title.text = "SETTINGS"
-	title.add_theme_font_size_override("font_size", 28)
-	title.add_theme_color_override("font_color", Color(0.82, 0.78, 0.65))
-	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	header.add_child(title)
+	title.text = "BINDINGS"
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.add_theme_color_override("font_color", GOLD_BRIGHT)
+	title.add_theme_font_size_override("font_size", 42)
+	title.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	title_container.add_child(title)
 
-	var back_btn := _make_back_button()
-	back_btn.pressed.connect(_go_back)
-	back_btn.button_down.connect(func() -> void:
-		if not back_btn.disabled: AudioManager.play_sfx("ui_click")
-	)
-	back_btn.mouse_entered.connect(func() -> void:
-		if not back_btn.disabled: AudioManager.play_sfx("ui_hover")
-	)
-	header.add_child(back_btn)
+	var ornament := TitleOrnamentDrawer.new()
+	ornament.custom_minimum_size = Vector2(400, 18)
+	ornament.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	ornament.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	title_container.add_child(ornament)
 
-	# Tab bar
+
+class TitleOrnamentDrawer extends Control:
+	func _draw() -> void:
+		var gold := Color(0.85, 0.7, 0.3, 0.6)
+		var cx: float = size.x / 2.0
+		var cy: float = size.y / 2.0
+		draw_line(Vector2(cx - 150, cy), Vector2(cx + 150, cy), gold, 1.0, true)
+		var pts := PackedVector2Array([
+			Vector2(cx, cy - 5), Vector2(cx + 5, cy),
+			Vector2(cx, cy + 5), Vector2(cx - 5, cy),
+		])
+		draw_colored_polygon(pts, gold)
+		draw_circle(Vector2(cx - 150, cy), 2.5, gold)
+		draw_circle(Vector2(cx + 150, cy), 2.5, gold)
+		for offset in [-80.0, -40.0, 40.0, 80.0]:
+			draw_line(Vector2(cx + offset, cy - 3), Vector2(cx + offset, cy + 3), Color(gold, 0.4), 1.0)
+
+
+# ── Main panel ─────────────────────────────────────────────
+
+func _build_main_panel() -> void:
+	var panel := PanelContainer.new()
+	panel.set_anchors_preset(Control.PRESET_FULL_RECT)
+	if _is_standalone:
+		panel.offset_left = 80
+		panel.offset_right = -80
+		panel.offset_top = 170
+		panel.offset_bottom = -110
+	else:
+		panel.offset_left = 80
+		panel.offset_right = -80
+		panel.offset_top = 60
+		panel.offset_bottom = -110
+
+	var panel_style := StyleBoxFlat.new()
+	panel_style.bg_color = PANEL_DARK
+	panel_style.border_color = Color(0.55, 0.50, 0.35, 0.55)
+	panel_style.set_border_width_all(1)
+	panel_style.set_corner_radius_all(6)
+	panel_style.set_content_margin_all(24)
+	panel.add_theme_stylebox_override("panel", panel_style)
+	_ui_root.add_child(panel)
+
+	var vbox := VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 10)
+	panel.add_child(vbox)
+
+	# Embedded mode: small inline title since we don't have the big top title
+	if not _is_standalone:
+		var inline_title := Label.new()
+		inline_title.text = "BINDINGS"
+		inline_title.add_theme_color_override("font_color", GOLD_BRIGHT)
+		inline_title.add_theme_font_size_override("font_size", 24)
+		vbox.add_child(inline_title)
+
+		var sub_div := DividerDrawer.new()
+		sub_div.custom_minimum_size = Vector2(0, 4)
+		vbox.add_child(sub_div)
+
 	var tab_bar := HBoxContainer.new()
 	tab_bar.add_theme_constant_override("separation", 0)
-	outer_vbox.add_child(tab_bar)
+	vbox.add_child(tab_bar)
 
 	_hotkey_tab_btn = _make_tab_button("HOTKEYS", true)
 	_hotkey_tab_btn.pressed.connect(_switch_to_hotkeys)
-	_hotkey_tab_btn.button_down.connect(func() -> void:
-		if not _hotkey_tab_btn.disabled: AudioManager.play_sfx("ui_click")
-	)
-	_hotkey_tab_btn.mouse_entered.connect(func() -> void:
-		if not _hotkey_tab_btn.disabled: AudioManager.play_sfx("ui_hover")
-	)
+	_wire_sfx(_hotkey_tab_btn)
 	tab_bar.add_child(_hotkey_tab_btn)
 
 	_audio_tab_btn = _make_tab_button("AUDIO", false)
 	_audio_tab_btn.pressed.connect(_switch_to_audio)
-	_audio_tab_btn.button_down.connect(func() -> void:
-		if not _audio_tab_btn.disabled: AudioManager.play_sfx("ui_click")
-	)
-	_audio_tab_btn.mouse_entered.connect(func() -> void:
-		if not _audio_tab_btn.disabled: AudioManager.play_sfx("ui_hover")
-	)
+	_wire_sfx(_audio_tab_btn)
 	tab_bar.add_child(_audio_tab_btn)
 
-	# Header separator
-	var header_sep := HSeparator.new()
-	var hs_style := StyleBoxFlat.new()
-	hs_style.bg_color = Color(0.22, 0.24, 0.28)
-	hs_style.set_content_margin_all(0)
-	header_sep.add_theme_stylebox_override("separator", hs_style)
-	header_sep.add_theme_constant_override("separation", 8)
-	outer_vbox.add_child(header_sep)
+	_hotkey_scroll = ScrollContainer.new()
+	_hotkey_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_hotkey_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_hotkey_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	vbox.add_child(_hotkey_scroll)
 
-	# ── HOTKEYS content ──
-	var hotkey_scroll := ScrollContainer.new()
-	hotkey_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	hotkey_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	outer_vbox.add_child(hotkey_scroll)
-
-	_hotkey_content = VBoxContainer.new()
-	_hotkey_content.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_hotkey_content.add_theme_constant_override("separation", 24)
-	hotkey_scroll.add_child(_hotkey_content)
+	var content := VBoxContainer.new()
+	content.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	content.add_theme_constant_override("separation", 22)
+	_hotkey_scroll.add_child(content)
 
 	for category in SettingsManager.ACTION_CATEGORIES:
-		_build_category(_hotkey_content, category, SettingsManager.ACTION_CATEGORIES[category])
+		_build_category(content, category, SettingsManager.ACTION_CATEGORIES[category])
 
-	# Hotkey footer
-	var footer_spacer := Control.new()
-	footer_spacer.custom_minimum_size = Vector2(0, 10)
-	outer_vbox.add_child(footer_spacer)
-
-	_hotkey_footer = HBoxContainer.new()
-	_hotkey_footer.alignment = BoxContainer.ALIGNMENT_END
-	outer_vbox.add_child(_hotkey_footer)
-
-	var reset_btn := _make_action_button("Reset to Defaults")
-	reset_btn.pressed.connect(_on_reset_pressed)
-	reset_btn.button_down.connect(func() -> void:
-		if not reset_btn.disabled: AudioManager.play_sfx("ui_click")
-	)
-	reset_btn.mouse_entered.connect(func() -> void:
-		if not reset_btn.disabled: AudioManager.play_sfx("ui_hover")
-	)
-	_hotkey_footer.add_child(reset_btn)
-
-	# ── AUDIO content ──
 	_audio_content = VBoxContainer.new()
 	_audio_content.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_audio_content.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_audio_content.add_theme_constant_override("separation", 24)
+	_audio_content.add_theme_constant_override("separation", 18)
 	_audio_content.visible = false
-	outer_vbox.add_child(_audio_content)
-
+	vbox.add_child(_audio_content)
 	_build_audio_panel()
 
 
 # ── Category section ────────────────────────────────────────
 
 func _build_category(parent: VBoxContainer, cat_name: String, actions: Array) -> void:
+	var header_box := HBoxContainer.new()
+	header_box.add_theme_constant_override("separation", 10)
+	parent.add_child(header_box)
+
+	var diamond := DiamondMarkDrawer.new()
+	diamond.custom_minimum_size = Vector2(10, 10)
+	diamond.color = GOLD
+	header_box.add_child(diamond)
+
 	var header := Label.new()
-	header.text = cat_name
-	header.add_theme_font_size_override("font_size", 18)
-	header.add_theme_color_override("font_color", Color(0.55, 0.55, 0.55))
-	parent.add_child(header)
+	header.text = cat_name.to_upper()
+	header.add_theme_font_size_override("font_size", 16)
+	header.add_theme_color_override("font_color", GOLD_SOFT)
+	header_box.add_child(header)
 
-	var sep := HSeparator.new()
-	var sep_style := StyleBoxFlat.new()
-	sep_style.bg_color = Color(0.18, 0.20, 0.24)
-	sep_style.set_content_margin_all(0)
-	sep.add_theme_stylebox_override("separator", sep_style)
-	sep.add_theme_constant_override("separation", 4)
-	parent.add_child(sep)
+	var divider := DividerDrawer.new()
+	divider.custom_minimum_size = Vector2(0, 4)
+	parent.add_child(divider)
 
-	# Two-column layout
 	var columns_box := HBoxContainer.new()
-	columns_box.add_theme_constant_override("separation", 16)
+	columns_box.add_theme_constant_override("separation", 18)
 	columns_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	parent.add_child(columns_box)
 
 	var left_col := VBoxContainer.new()
 	left_col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	left_col.add_theme_constant_override("separation", 2)
+	left_col.add_theme_constant_override("separation", 4)
 	columns_box.add_child(left_col)
 
 	var right_col := VBoxContainer.new()
 	right_col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	right_col.add_theme_constant_override("separation", 2)
+	right_col.add_theme_constant_override("separation", 4)
 	columns_box.add_child(right_col)
 
 	for i in actions.size():
@@ -219,24 +272,26 @@ func _build_category(parent: VBoxContainer, cat_name: String, actions: Array) ->
 
 func _build_keybind_row(parent: VBoxContainer, action: String, label_text: String) -> void:
 	var row_panel := PanelContainer.new()
-	row_panel.custom_minimum_size = Vector2(0, 38)
+	row_panel.custom_minimum_size = Vector2(0, 40)
 
 	var row_style := StyleBoxFlat.new()
-	row_style.bg_color = Color(0.11, 0.12, 0.15)
-	row_style.border_color = Color(0.18, 0.20, 0.24)
+	row_style.bg_color = Color(0.10, 0.11, 0.14, 0.55)
+	row_style.border_color = Color(0.40, 0.35, 0.22, 0.4)
 	row_style.set_border_width_all(1)
-	row_style.set_corner_radius_all(2)
+	row_style.set_corner_radius_all(4)
 	row_style.set_content_margin_all(0)
-	row_style.content_margin_left = 12
+	row_style.content_margin_left = 14
 	row_style.content_margin_right = 8
 	row_panel.add_theme_stylebox_override("panel", row_style)
 
 	row_panel.mouse_entered.connect(func() -> void:
-		row_style.bg_color = Color(0.15, 0.17, 0.22)
+		row_style.bg_color = Color(0.16, 0.16, 0.20, 0.7)
+		row_style.border_color = Color(0.65, 0.55, 0.28, 0.6)
 		row_panel.queue_redraw()
 	)
 	row_panel.mouse_exited.connect(func() -> void:
-		row_style.bg_color = Color(0.11, 0.12, 0.15)
+		row_style.bg_color = Color(0.10, 0.11, 0.14, 0.55)
+		row_style.border_color = Color(0.40, 0.35, 0.22, 0.4)
 		row_panel.queue_redraw()
 	)
 	parent.add_child(row_panel)
@@ -250,21 +305,16 @@ func _build_keybind_row(parent: VBoxContainer, action: String, label_text: Strin
 	name_label.text = label_text
 	name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	name_label.add_theme_font_size_override("font_size", 15)
-	name_label.add_theme_color_override("font_color", Color(0.72, 0.72, 0.72))
+	name_label.add_theme_color_override("font_color", PARCHMENT)
 	name_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	hbox.add_child(name_label)
 
 	var badge := Button.new()
-	badge.custom_minimum_size = Vector2(80, 30)
+	badge.custom_minimum_size = Vector2(96, 30)
 	badge.text = SettingsManager.get_event_text(action)
 	badge.pressed.connect(_on_badge_pressed.bind(action, badge))
-	badge.button_down.connect(func() -> void:
-		if not badge.disabled: AudioManager.play_sfx("ui_click")
-	)
-	badge.mouse_entered.connect(func() -> void:
-		if not badge.disabled: AudioManager.play_sfx("ui_hover")
-	)
 	_style_badge(badge, false)
+	_wire_sfx(badge)
 	hbox.add_child(badge)
 	_badges[action] = badge
 
@@ -275,13 +325,13 @@ func _style_badge(badge: Button, is_listening: bool) -> void:
 	var font_color: Color
 
 	if is_listening:
-		bg_color = Color(0.20, 0.22, 0.30)
-		border_color = Color(0.55, 0.55, 0.70)
-		font_color = Color(1.0, 0.95, 0.70)
+		bg_color = Color(0.20, 0.18, 0.12, 0.95)
+		border_color = Color(1.0, 0.85, 0.40, 0.95)
+		font_color = GOLD_BRIGHT
 	else:
-		bg_color = Color(0.16, 0.17, 0.22)
-		border_color = Color(0.28, 0.30, 0.36)
-		font_color = Color(0.85, 0.85, 0.85)
+		bg_color = Color(0.06, 0.07, 0.10, 0.95)
+		border_color = Color(0.55, 0.50, 0.35, 0.7)
+		font_color = GOLD_SOFT
 
 	var normal := StyleBoxFlat.new()
 	normal.bg_color = bg_color
@@ -292,257 +342,142 @@ func _style_badge(badge: Button, is_listening: bool) -> void:
 	badge.add_theme_stylebox_override("normal", normal)
 
 	var hover := StyleBoxFlat.new()
-	hover.bg_color = bg_color.lightened(0.08)
-	hover.border_color = border_color.lightened(0.15)
+	hover.bg_color = bg_color.lightened(0.06)
+	hover.border_color = Color(0.85, 0.7, 0.3, 0.9)
 	hover.set_border_width_all(1)
 	hover.set_corner_radius_all(3)
 	hover.set_content_margin_all(4)
 	badge.add_theme_stylebox_override("hover", hover)
 
 	var pressed_sb := StyleBoxFlat.new()
-	pressed_sb.bg_color = bg_color.lightened(0.12)
-	pressed_sb.border_color = border_color.lightened(0.2)
+	pressed_sb.bg_color = bg_color.lightened(0.10)
+	pressed_sb.border_color = Color(1.0, 0.85, 0.40, 0.95)
 	pressed_sb.set_border_width_all(1)
 	pressed_sb.set_corner_radius_all(3)
 	pressed_sb.set_content_margin_all(4)
 	badge.add_theme_stylebox_override("pressed", pressed_sb)
 
 	badge.add_theme_color_override("font_color", font_color)
-	badge.add_theme_color_override("font_hover_color", font_color.lightened(0.1))
+	badge.add_theme_color_override("font_hover_color", GOLD_BRIGHT)
 	badge.add_theme_font_size_override("font_size", 14)
 
 
-# ── Widget builders ─────────────────────────────────────────
+# ── Bottom button bar ──────────────────────────────────────
 
-func _make_back_button() -> Button:
-	var btn := Button.new()
-	btn.text = "✕"
-	btn.custom_minimum_size = Vector2(40, 40)
+func _build_button_bar() -> void:
+	var bar_panel := PanelContainer.new()
+	bar_panel.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
+	bar_panel.offset_top = -90
+	bar_panel.offset_bottom = 0
+
+	var bar_style := StyleBoxFlat.new()
+	bar_style.bg_color = Color(0.06, 0.07, 0.10, 0.95)
+	bar_style.border_color = Color(0.45, 0.38, 0.20, 0.5)
+	bar_style.border_width_top = 1
+	bar_style.set_content_margin_all(0)
+	bar_style.content_margin_top = 20
+	bar_style.content_margin_bottom = 20
+	bar_style.content_margin_left = 40
+	bar_style.content_margin_right = 40
+	bar_panel.add_theme_stylebox_override("panel", bar_style)
+	_ui_root.add_child(bar_panel)
+
+	var hbox := HBoxContainer.new()
+	hbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	hbox.add_theme_constant_override("separation", 20)
+	bar_panel.add_child(hbox)
+
+	var reset_btn := Button.new()
+	reset_btn.text = "Reset to Defaults"
+	reset_btn.custom_minimum_size = Vector2(180, 48)
+	reset_btn.pressed.connect(_on_reset_pressed)
+	_style_button(reset_btn)
+	_wire_sfx(reset_btn)
+	hbox.add_child(reset_btn)
+
+	var back_btn := Button.new()
+	back_btn.text = "Back" if not _is_standalone else "Back to Camp"
+	back_btn.custom_minimum_size = Vector2(180, 48)
+	back_btn.pressed.connect(_go_back)
+	_style_button(back_btn)
+	_wire_sfx(back_btn)
+	hbox.add_child(back_btn)
+
+
+# ── Generic gold button styling ────────────────────────────
+
+func _style_button(button: Button) -> void:
 	var normal := StyleBoxFlat.new()
-	normal.bg_color = Color(0.0, 0.0, 0.0, 0.0)
-	normal.set_content_margin_all(0)
-	btn.add_theme_stylebox_override("normal", normal)
-	var hover := StyleBoxFlat.new()
-	hover.bg_color = Color(0.2, 0.2, 0.25)
-	hover.set_corner_radius_all(4)
-	hover.set_content_margin_all(0)
-	btn.add_theme_stylebox_override("hover", hover)
-	btn.add_theme_color_override("font_color", Color(0.6, 0.6, 0.6))
-	btn.add_theme_color_override("font_hover_color", Color(1.0, 0.4, 0.4))
-	btn.add_theme_font_size_override("font_size", 22)
-	return btn
-
-
-func _make_tab_button(label_text: String, active: bool) -> Button:
-	var btn := Button.new()
-	btn.text = label_text
-	btn.custom_minimum_size = Vector2(120, 36)
-
-	var style := StyleBoxFlat.new()
-	if active:
-		style.bg_color = Color(0.14, 0.15, 0.19)
-		style.border_color = Color(0.30, 0.32, 0.38)
-	else:
-		style.bg_color = Color(0.08, 0.09, 0.12)
-		style.border_color = Color(0.18, 0.20, 0.24)
-	style.set_border_width_all(1)
-	style.border_width_bottom = 0
-	style.set_corner_radius_all(0)
-	style.corner_radius_top_left = 4
-	style.corner_radius_top_right = 4
-	style.set_content_margin_all(8)
-	btn.add_theme_stylebox_override("normal", style)
-	btn.add_theme_stylebox_override("hover", style)
-
-	var font_c := Color(0.82, 0.78, 0.65) if active else Color(0.45, 0.45, 0.45)
-	btn.add_theme_color_override("font_color", font_c)
-	btn.add_theme_color_override("font_hover_color", font_c.lightened(0.1))
-	btn.add_theme_font_size_override("font_size", 14)
-	return btn
-
-
-func _make_action_button(label_text: String) -> Button:
-	var btn := Button.new()
-	btn.text = label_text
-	btn.custom_minimum_size = Vector2(180, 38)
-
-	var normal := StyleBoxFlat.new()
-	normal.bg_color = Color(0.13, 0.14, 0.18)
-	normal.border_color = Color(0.28, 0.30, 0.36)
+	normal.bg_color = Color(0.14, 0.13, 0.18, 0.9)
+	normal.border_color = Color(0.55, 0.50, 0.35, 0.6)
 	normal.set_border_width_all(1)
 	normal.set_corner_radius_all(4)
 	normal.set_content_margin_all(8)
-	btn.add_theme_stylebox_override("normal", normal)
+	button.add_theme_stylebox_override("normal", normal)
 
 	var hover := StyleBoxFlat.new()
-	hover.bg_color = Color(0.18, 0.20, 0.26)
-	hover.border_color = Color(0.45, 0.48, 0.55)
+	hover.bg_color = Color(0.20, 0.18, 0.25, 0.95)
+	hover.border_color = Color(0.75, 0.65, 0.30, 0.8)
 	hover.set_border_width_all(1)
 	hover.set_corner_radius_all(4)
 	hover.set_content_margin_all(8)
-	btn.add_theme_stylebox_override("hover", hover)
+	button.add_theme_stylebox_override("hover", hover)
 
-	var pressed_sb := StyleBoxFlat.new()
-	pressed_sb.bg_color = Color(0.22, 0.24, 0.30)
-	pressed_sb.border_color = Color(0.50, 0.52, 0.58)
-	pressed_sb.set_border_width_all(1)
-	pressed_sb.set_corner_radius_all(4)
-	pressed_sb.set_content_margin_all(8)
-	btn.add_theme_stylebox_override("pressed", pressed_sb)
+	var pressed := StyleBoxFlat.new()
+	pressed.bg_color = Color(0.10, 0.09, 0.14, 0.95)
+	pressed.border_color = Color(0.75, 0.65, 0.30, 0.8)
+	pressed.set_border_width_all(1)
+	pressed.set_corner_radius_all(4)
+	pressed.set_content_margin_all(8)
+	button.add_theme_stylebox_override("pressed", pressed)
 
-	btn.add_theme_color_override("font_color", Color(0.70, 0.68, 0.58))
-	btn.add_theme_color_override("font_hover_color", Color(1.0, 0.95, 0.80))
-	btn.add_theme_font_size_override("font_size", 14)
-	return btn
+	button.add_theme_color_override("font_color", Color(0.78, 0.74, 0.60))
+	button.add_theme_color_override("font_hover_color", Color(1.0, 0.92, 0.65))
+	button.add_theme_color_override("font_pressed_color", Color(0.9, 0.82, 0.55))
+	button.add_theme_font_size_override("font_size", 17)
 
-
-# ── Tab switching ──────────────────────────────────────────
-
-func _switch_to_hotkeys() -> void:
-	_hotkey_content.get_parent().visible = true
-	_hotkey_footer.visible = true
-	_hotkey_footer.get_parent().get_child(_hotkey_footer.get_index() - 1).visible = true
-	_audio_content.visible = false
-	_update_tab_style(_hotkey_tab_btn, true)
-	_update_tab_style(_audio_tab_btn, false)
-
-
-func _switch_to_audio() -> void:
-	_hotkey_content.get_parent().visible = false
-	_hotkey_footer.visible = false
-	_hotkey_footer.get_parent().get_child(_hotkey_footer.get_index() - 1).visible = false
-	_audio_content.visible = true
-	_update_tab_style(_hotkey_tab_btn, false)
-	_update_tab_style(_audio_tab_btn, true)
-
-
-func _update_tab_style(btn: Button, active: bool) -> void:
-	var style := StyleBoxFlat.new()
-	if active:
-		style.bg_color = Color(0.14, 0.15, 0.19)
-		style.border_color = Color(0.30, 0.32, 0.38)
-	else:
-		style.bg_color = Color(0.08, 0.09, 0.12)
-		style.border_color = Color(0.18, 0.20, 0.24)
-	style.set_border_width_all(1)
-	style.border_width_bottom = 0
-	style.set_corner_radius_all(0)
-	style.corner_radius_top_left = 4
-	style.corner_radius_top_right = 4
-	style.set_content_margin_all(8)
-	btn.add_theme_stylebox_override("normal", style)
-	btn.add_theme_stylebox_override("hover", style)
-	var font_c := Color(0.82, 0.78, 0.65) if active else Color(0.45, 0.45, 0.45)
-	btn.add_theme_color_override("font_color", font_c)
-	btn.add_theme_color_override("font_hover_color", font_c.lightened(0.1))
-
-
-# ── Audio panel ────────────────────────────────────────────
-
-func _build_audio_panel() -> void:
-	var volume_header := Label.new()
-	volume_header.text = "VOLUME"
-	volume_header.add_theme_font_size_override("font_size", 18)
-	volume_header.add_theme_color_override("font_color", Color(0.55, 0.55, 0.55))
-	_audio_content.add_child(volume_header)
-
-	var sep := HSeparator.new()
-	var sep_style := StyleBoxFlat.new()
-	sep_style.bg_color = Color(0.18, 0.20, 0.24)
-	sep_style.set_content_margin_all(0)
-	sep.add_theme_stylebox_override("separator", sep_style)
-	sep.add_theme_constant_override("separation", 4)
-	_audio_content.add_child(sep)
-
-	_build_volume_slider("Overall", "Master")
-	_build_volume_slider("Music", "Music")
-	_build_volume_slider("SFX", "SFX")
-
-
-func _build_volume_slider(label_text: String, bus_name: String) -> void:
-	var row_panel := PanelContainer.new()
-	row_panel.custom_minimum_size = Vector2(0, 48)
-
-	var row_style := StyleBoxFlat.new()
-	row_style.bg_color = Color(0.11, 0.12, 0.15)
-	row_style.border_color = Color(0.18, 0.20, 0.24)
-	row_style.set_border_width_all(1)
-	row_style.set_corner_radius_all(2)
-	row_style.set_content_margin_all(0)
-	row_style.content_margin_left = 16
-	row_style.content_margin_right = 16
-	row_panel.add_theme_stylebox_override("panel", row_style)
-
-	row_panel.mouse_entered.connect(func() -> void:
-		row_style.bg_color = Color(0.15, 0.17, 0.22)
-		row_panel.queue_redraw()
+	button.button_down.connect(func() -> void:
+		button.pivot_offset = button.size / 2.0
+		var tw := button.create_tween()
+		tw.tween_property(button, "scale", Vector2(0.95, 0.95), 0.05)
 	)
-	row_panel.mouse_exited.connect(func() -> void:
-		row_style.bg_color = Color(0.11, 0.12, 0.15)
-		row_panel.queue_redraw()
+	button.button_up.connect(func() -> void:
+		var tw := button.create_tween()
+		tw.tween_property(button, "scale", Vector2.ONE, 0.05)
 	)
-	_audio_content.add_child(row_panel)
 
-	var hbox := HBoxContainer.new()
-	hbox.add_theme_constant_override("separation", 16)
-	row_panel.add_child(hbox)
 
-	var name_label := Label.new()
-	name_label.text = label_text
-	name_label.custom_minimum_size = Vector2(100, 0)
-	name_label.add_theme_font_size_override("font_size", 15)
-	name_label.add_theme_color_override("font_color", Color(0.72, 0.72, 0.72))
-	name_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	hbox.add_child(name_label)
+# ── Drawers ────────────────────────────────────────────────
 
-	var slider := HSlider.new()
-	slider.min_value = 0.0
-	slider.max_value = 100.0
-	slider.step = 1.0
-	slider.value = AudioManager.get_bus_volume(bus_name) * 100.0
-	slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	slider.custom_minimum_size = Vector2(200, 0)
+class DividerDrawer extends Control:
+	func _draw() -> void:
+		var gold := Color(0.55, 0.50, 0.35, 0.5)
+		var cy: float = size.y / 2.0
+		draw_line(Vector2(0, cy), Vector2(size.x, cy), gold, 1.0)
 
-	var slider_style := StyleBoxFlat.new()
-	slider_style.bg_color = Color(0.2, 0.22, 0.28)
-	slider_style.set_corner_radius_all(4)
-	slider_style.set_content_margin_all(0)
-	slider_style.content_margin_top = 12
-	slider_style.content_margin_bottom = 12
-	slider.add_theme_stylebox_override("slider", slider_style)
 
-	var grabber_style := StyleBoxFlat.new()
-	grabber_style.bg_color = Color(0.35, 0.38, 0.48)
-	grabber_style.set_corner_radius_all(4)
-	grabber_style.set_content_margin_all(0)
-	grabber_style.content_margin_top = 12
-	grabber_style.content_margin_bottom = 12
-	slider.add_theme_stylebox_override("grabber_area", grabber_style)
+class DiamondMarkDrawer extends Control:
+	var color: Color = Color.WHITE
+	func _draw() -> void:
+		var c := size / 2.0
+		var s: float = min(size.x, size.y) / 2.0 - 1.0
+		var pts := PackedVector2Array([
+			c + Vector2(0, -s),
+			c + Vector2(s, 0),
+			c + Vector2(0, s),
+			c + Vector2(-s, 0),
+		])
+		draw_colored_polygon(pts, color)
 
-	var grabber_hl := StyleBoxFlat.new()
-	grabber_hl.bg_color = Color(0.45, 0.48, 0.58)
-	grabber_hl.set_corner_radius_all(4)
-	grabber_hl.set_content_margin_all(0)
-	grabber_hl.content_margin_top = 12
-	grabber_hl.content_margin_bottom = 12
-	slider.add_theme_stylebox_override("grabber_area_highlight", grabber_hl)
 
-	hbox.add_child(slider)
-	_sliders[bus_name] = slider
+# ── Fade in ────────────────────────────────────────────────
 
-	var value_label := Label.new()
-	value_label.text = "%d" % int(slider.value)
-	value_label.custom_minimum_size = Vector2(40, 0)
-	value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	value_label.add_theme_font_size_override("font_size", 15)
-	value_label.add_theme_color_override("font_color", Color(0.82, 0.78, 0.65))
-	value_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	hbox.add_child(value_label)
-
-	slider.value_changed.connect(func(val: float) -> void:
-		AudioManager.set_bus_volume(bus_name, val / 100.0)
-		value_label.text = "%d" % int(val)
-	)
+func _animate_fade_in() -> void:
+	if _ui_root == null:
+		return
+	_ui_root.modulate.a = 0.0
+	var tw := _ui_root.create_tween()
+	tw.tween_property(_ui_root, "modulate:a", 1.0, 0.5).set_ease(Tween.EASE_OUT)
 
 
 # ── Keybinding logic ───────────────────────────────────────
@@ -553,7 +488,7 @@ func _on_badge_pressed(action: String, badge: Button) -> void:
 
 	_listening_action = action
 	_listening_badge = badge
-	badge.text = "..."
+	badge.text = "press a key…"
 	_style_badge(badge, true)
 
 	var tw := badge.create_tween()
@@ -586,3 +521,209 @@ func _on_reset_pressed() -> void:
 		var badge: Button = _badges[action]
 		badge.text = SettingsManager.get_event_text(action)
 		_style_badge(badge, false)
+
+
+# ── Tab switching & audio panel ────────────────────────────
+
+func _wire_sfx(btn: Button) -> void:
+	btn.button_down.connect(func() -> void:
+		if not btn.disabled: AudioManager.play_sfx("ui_click")
+	)
+	btn.mouse_entered.connect(func() -> void:
+		if not btn.disabled: AudioManager.play_sfx("ui_hover")
+	)
+
+
+func _make_tab_button(label: String, active: bool) -> Button:
+	var btn := Button.new()
+	btn.text = label
+	btn.custom_minimum_size = Vector2(140, 36)
+	_style_tab_button(btn, active)
+	return btn
+
+
+func _style_tab_button(btn: Button, active: bool) -> void:
+	var style := StyleBoxFlat.new()
+	if active:
+		style.bg_color = Color(0.14, 0.15, 0.19, 0.95)
+		style.border_color = Color(0.75, 0.65, 0.30, 0.75)
+	else:
+		style.bg_color = Color(0.06, 0.07, 0.10, 0.85)
+		style.border_color = Color(0.35, 0.30, 0.20, 0.55)
+	style.set_border_width_all(1)
+	style.border_width_bottom = 0
+	style.set_corner_radius_all(0)
+	style.corner_radius_top_left = 4
+	style.corner_radius_top_right = 4
+	style.set_content_margin_all(8)
+	btn.add_theme_stylebox_override("normal", style)
+	btn.add_theme_stylebox_override("hover", style)
+	btn.add_theme_stylebox_override("pressed", style)
+	var font_c: Color = GOLD_BRIGHT if active else GOLD_SOFT.darkened(0.2)
+	btn.add_theme_color_override("font_color", font_c)
+	btn.add_theme_color_override("font_hover_color", GOLD_BRIGHT)
+	btn.add_theme_font_size_override("font_size", 15)
+
+
+func _switch_to_hotkeys() -> void:
+	_hotkey_scroll.visible = true
+	_audio_content.visible = false
+	_style_tab_button(_hotkey_tab_btn, true)
+	_style_tab_button(_audio_tab_btn, false)
+
+
+func _switch_to_audio() -> void:
+	_hotkey_scroll.visible = false
+	_audio_content.visible = true
+	_style_tab_button(_hotkey_tab_btn, false)
+	_style_tab_button(_audio_tab_btn, true)
+
+
+func _build_audio_panel() -> void:
+	var header_box := HBoxContainer.new()
+	header_box.add_theme_constant_override("separation", 10)
+	_audio_content.add_child(header_box)
+
+	var diamond := DiamondMarkDrawer.new()
+	diamond.custom_minimum_size = Vector2(10, 10)
+	diamond.color = GOLD
+	header_box.add_child(diamond)
+
+	var header := Label.new()
+	header.text = "VOLUME"
+	header.add_theme_font_size_override("font_size", 16)
+	header.add_theme_color_override("font_color", GOLD_SOFT)
+	header_box.add_child(header)
+
+	var divider := DividerDrawer.new()
+	divider.custom_minimum_size = Vector2(0, 4)
+	_audio_content.add_child(divider)
+
+	_build_volume_slider("Overall", "Master", GOLD_BRIGHT)
+	_build_volume_slider("Music", "Music", Color(0.55, 0.75, 1.0))
+	_build_volume_slider("SFX", "SFX", Color(0.95, 0.65, 0.35))
+
+
+func _build_volume_slider(label_text: String, bus_name: String, accent: Color) -> void:
+	var row_panel := PanelContainer.new()
+	row_panel.custom_minimum_size = Vector2(0, 48)
+
+	var row_style := StyleBoxFlat.new()
+	row_style.bg_color = Color(0.10, 0.11, 0.14, 0.55)
+	row_style.border_color = Color(0.40, 0.35, 0.22, 0.4)
+	row_style.set_border_width_all(1)
+	row_style.set_corner_radius_all(4)
+	row_style.set_content_margin_all(0)
+	row_style.content_margin_left = 14
+	row_style.content_margin_right = 14
+	row_panel.add_theme_stylebox_override("panel", row_style)
+
+	row_panel.mouse_entered.connect(func() -> void:
+		row_style.bg_color = Color(0.16, 0.16, 0.20, 0.7)
+		row_style.border_color = Color(0.65, 0.55, 0.28, 0.6)
+		row_panel.queue_redraw()
+	)
+	row_panel.mouse_exited.connect(func() -> void:
+		row_style.bg_color = Color(0.10, 0.11, 0.14, 0.55)
+		row_style.border_color = Color(0.40, 0.35, 0.22, 0.4)
+		row_panel.queue_redraw()
+	)
+	_audio_content.add_child(row_panel)
+
+	var hbox := HBoxContainer.new()
+	hbox.add_theme_constant_override("separation", 14)
+	row_panel.add_child(hbox)
+
+	# TODO: Replace with channel-icon art asset
+	var dot := ColorRect.new()
+	dot.custom_minimum_size = Vector2(10, 10)
+	dot.color = accent
+	dot.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	hbox.add_child(dot)
+
+	var name_label := Label.new()
+	name_label.text = label_text
+	name_label.custom_minimum_size = Vector2(90, 0)
+	name_label.add_theme_font_size_override("font_size", 15)
+	name_label.add_theme_color_override("font_color", PARCHMENT)
+	name_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	hbox.add_child(name_label)
+
+	var slider := HSlider.new()
+	slider.min_value = 0.0
+	slider.max_value = 100.0
+	slider.step = 1.0
+	slider.value = AudioManager.get_bus_volume(bus_name) * 100.0
+	slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	slider.custom_minimum_size = Vector2(200, 0)
+	_style_slider(slider, accent)
+	hbox.add_child(slider)
+	_sliders[bus_name] = slider
+
+	var value_badge := PanelContainer.new()
+	value_badge.custom_minimum_size = Vector2(56, 28)
+	var badge_style := StyleBoxFlat.new()
+	badge_style.bg_color = Color(0.06, 0.07, 0.10, 0.95)
+	badge_style.border_color = Color(0.55, 0.50, 0.35, 0.7)
+	badge_style.set_border_width_all(1)
+	badge_style.set_corner_radius_all(3)
+	badge_style.set_content_margin_all(2)
+	value_badge.add_theme_stylebox_override("panel", badge_style)
+	hbox.add_child(value_badge)
+
+	var value_label := Label.new()
+	value_label.text = "%d" % int(slider.value)
+	value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	value_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	value_label.add_theme_font_size_override("font_size", 14)
+	value_label.add_theme_color_override("font_color", GOLD_BRIGHT)
+	value_badge.add_child(value_label)
+
+	slider.value_changed.connect(func(val: float) -> void:
+		AudioManager.set_bus_volume(bus_name, val / 100.0)
+		value_label.text = "%d" % int(val)
+	)
+
+
+func _style_slider(slider: HSlider, accent: Color) -> void:
+	var track := StyleBoxFlat.new()
+	track.bg_color = Color(0.06, 0.07, 0.10, 0.95)
+	track.border_color = Color(0.40, 0.35, 0.22, 0.6)
+	track.set_border_width_all(1)
+	track.set_corner_radius_all(3)
+	track.content_margin_top = 6
+	track.content_margin_bottom = 6
+	slider.add_theme_stylebox_override("slider", track)
+
+	var fill := StyleBoxFlat.new()
+	fill.bg_color = accent
+	fill.bg_color.a = 0.55
+	fill.border_color = accent
+	fill.set_border_width_all(1)
+	fill.set_corner_radius_all(3)
+	slider.add_theme_stylebox_override("grabber_area", fill)
+	slider.add_theme_stylebox_override("grabber_area_highlight", fill)
+
+	slider.add_theme_icon_override("grabber", _grabber_texture(accent))
+	slider.add_theme_icon_override("grabber_highlight", _grabber_texture(accent.lightened(0.15)))
+
+
+func _grabber_texture(c: Color) -> ImageTexture:
+	var size := 14
+	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
+	img.fill(Color(0, 0, 0, 0))
+	var center := Vector2(size / 2.0, size / 2.0)
+	var radius: float = size / 2.0 - 1.0
+	for y in size:
+		for x in size:
+			var d: float = Vector2(x + 0.5, y + 0.5).distance_to(center)
+			if d <= radius:
+				var t: float = clamp(1.0 - (d / radius), 0.0, 1.0)
+				var col := c
+				col.a = 0.85 + 0.15 * t
+				img.set_pixel(x, y, col)
+			elif d <= radius + 1.0:
+				img.set_pixel(x, y, Color(c.r, c.g, c.b, 0.4))
+	return ImageTexture.create_from_image(img)
+
+

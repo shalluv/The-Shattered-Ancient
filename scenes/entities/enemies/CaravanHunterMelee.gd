@@ -16,11 +16,10 @@ func _ready() -> void:
 	enemy_hp = HUNTER_HP
 	move_speed = HUNTER_SPEED
 	damage = HUNTER_DAMAGE
-	enemy_color = HUNTER_COLOR
+	enemy_color = Color.WHITE
 	super._ready()  # Call super first to set up hitbox connections
 	collision_layer = 2  # enemies layer
 	collision_mask = 1   # can collide with swarm_units
-	enemy_visual.color = HUNTER_COLOR
 	_find_caravan()
 
 
@@ -44,6 +43,7 @@ func _physics_process(delta: float) -> void:
 			velocity = separation
 			if velocity.length_squared() > 0.1:
 				move_and_slide()
+			_update_facing()
 			return
 
 	var direction := global_position.direction_to(caravan_target.global_position)
@@ -66,6 +66,7 @@ func _physics_process(delta: float) -> void:
 			velocity = direction * effective_speed + separation
 	
 	move_and_slide()
+	_update_facing()
 
 
 func _attack_caravan() -> void:
@@ -76,5 +77,5 @@ func _attack_caravan() -> void:
 
 func _play_attack_effect() -> void:
 	var tween := create_tween()
-	tween.tween_property(enemy_visual, "color", Color.RED, 0.1)
-	tween.tween_property(enemy_visual, "color", HUNTER_COLOR, 0.1)
+	tween.tween_property(enemy_visual, "modulate", Color.RED, 0.1)
+	tween.tween_property(enemy_visual, "modulate", Color.WHITE, 0.1)

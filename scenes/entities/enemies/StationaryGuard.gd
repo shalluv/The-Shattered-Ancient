@@ -18,9 +18,8 @@ func _ready() -> void:
 	enemy_hp = 2
 	move_speed = 40.0
 	damage = 1
-	enemy_color = GUARD_COLOR
+	enemy_color = Color.WHITE
 	super._ready()
-	enemy_visual.color = GUARD_COLOR
 	guard_position = global_position
 	_pick_patrol_target()
 
@@ -55,6 +54,7 @@ func _patrol(delta: float) -> void:
 	var direction := global_position.direction_to(patrol_target)
 	velocity = direction * PATROL_SPEED
 	move_and_slide()
+	_update_facing()
 
 
 func _pick_patrol_target() -> void:
@@ -77,5 +77,5 @@ func _check_aggro() -> void:
 
 func _play_aggro_effect() -> void:
 	var tween := create_tween()
-	tween.tween_property(enemy_visual, "color", Color.RED, 0.1)
-	tween.tween_property(enemy_visual, "color", GUARD_COLOR, 0.1)
+	tween.tween_property(enemy_visual, "modulate", Color.RED, 0.1)
+	tween.tween_property(enemy_visual, "modulate", Color.WHITE, 0.1)

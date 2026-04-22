@@ -13,7 +13,7 @@ const SETTINGS_SCENE := preload("res://scenes/ui/Settings.tscn")
 
 # Scenes where the pause menu should NOT appear.
 const EXCLUDED_SCENES: PackedStringArray = [
-	"MainMenu", "Lobby", "MetaUpgrades", "ArmyDraft", "GameOver",
+	"Lobby", "MetaUpgrades", "ArmyDraft", "GameOver",
 	"PathChoice", "BoonSelection", "RunMapScreen", "MiniBossReward",
 	"Settings",
 ]

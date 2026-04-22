@@ -66,11 +66,11 @@ func _ready() -> void:
 
 	SwarmManager.unit_registered.connect(_on_unit_registered_meta)
 
-	game_camera.global_position = room_size / 2.0
 	game_camera.limit_left = 0
 	game_camera.limit_top = 0
 	game_camera.limit_right = int(room_size.x)
 	game_camera.limit_bottom = int(room_size.y)
+	game_camera.global_position = SwarmManager.get_swarm_center()
 
 
 func _exit_tree() -> void:

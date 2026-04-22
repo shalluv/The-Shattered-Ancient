@@ -15,6 +15,12 @@ const ACTION_CATEGORIES: Dictionary = {
 		["next_unit", "Next Unit"],
 		["prev_unit", "Previous Unit"],
 	],
+	"SELECT BY TYPE": [
+		["select_all_swordsman", "Select All Swordsmen"],
+		["select_all_archer", "Select All Archers"],
+		["select_all_priest", "Select All Priests"],
+		["select_all_mage", "Select All Mages"],
+	],
 	"CONTROL GROUPS": [
 		["group_1", "Group 1"],
 		["group_2", "Group 2"],
@@ -36,6 +42,10 @@ const _DEFAULT_KEYS: Dictionary = {
 	"select_all_other": KEY_NONE,
 	"next_unit": KEY_NONE,
 	"prev_unit": KEY_NONE,
+	"select_all_swordsman": KEY_F1,
+	"select_all_archer": KEY_F2,
+	"select_all_priest": KEY_F3,
+	"select_all_mage": KEY_F4,
 	"group_1": KEY_1,
 	"group_2": KEY_2,
 	"group_3": KEY_3,

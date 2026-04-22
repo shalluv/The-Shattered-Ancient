@@ -20,15 +20,15 @@ const ROOM_COLORS: Dictionary = {
 	"boss": Color("#FF0000"),
 }
 
-const ROOM_LABELS: Dictionary = {
-	"start": "S",
-	"combat_small": "C",
-	"combat_medium": "C+",
-	"village": "V",
-	"hero_room": "H",
-	"shop": "$",
-	"mini_boss": "MB",
-	"boss": "B",
+const ROOM_ICONS: Dictionary = {
+	"start": preload("res://art/ui/map/start-icon.aseprite"),
+	"combat_small": preload("res://art/ui/map/combat-small-icon.aseprite"),
+	"combat_medium": preload("res://art/ui/map/combat-medium-icon.aseprite"),
+	"village": preload("res://art/ui/map/village-icon.aseprite"),
+	"hero_room": preload("res://art/ui/map/hero-icon.aseprite"),
+	"shop": preload("res://art/ui/map/shop-icon.aseprite"),
+	"mini_boss": preload("res://art/ui/map/miniboss-icon.aseprite"),
+	"boss": preload("res://art/ui/map/boss-icon.aseprite"),
 }
 
 var selected_node_index: int = -1
@@ -156,11 +156,23 @@ func _build_ui() -> void:
 
 	var legend_order := ["start", "combat_small", "combat_medium", "village", "hero_room", "shop", "mini_boss", "boss"]
 	for room_type in legend_order:
+		var legend_row := HBoxContainer.new()
+		legend_row.add_theme_constant_override("separation", 8)
+		legend_vbox.add_child(legend_row)
+
+		var legend_icon := TextureRect.new()
+		legend_icon.texture = ROOM_ICONS.get(room_type, null)
+		legend_icon.custom_minimum_size = Vector2(20, 20)
+		legend_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		legend_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		legend_row.add_child(legend_icon)
+
 		var legend_line := Label.new()
-		legend_line.text = "%s : %s" % [ROOM_LABELS.get(room_type, "?"), room_type.capitalize().replace("_", " ")]
+		legend_line.text = room_type.capitalize().replace("_", " ")
+		legend_line.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		legend_line.add_theme_color_override("font_color", Color(0.88, 0.86, 0.78, 0.92))
 		legend_line.add_theme_font_size_override("font_size", 13)
-		legend_vbox.add_child(legend_line)
+		legend_row.add_child(legend_line)
 
 	# Bottom panel
 	var bottom_panel := Control.new()
@@ -286,33 +298,32 @@ func _create_node_control(node: MapNodeData, center_x: float) -> void:
 	container.size = Vector2(NODE_SIZE, NODE_SIZE)
 	container.mouse_filter = Control.MOUSE_FILTER_STOP
 
-	var border := ColorRect.new()
-	border.position = Vector2(-2, -2)
-	border.size = Vector2(NODE_BORDER_SIZE, NODE_BORDER_SIZE)
-	border.color = Color("#1a2e1a")
-	border.name = "Border"
-	border.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	container.add_child(border)
-
-	# TODO: Replace with room type art asset
-	var main := ColorRect.new()
+	var main := TextureRect.new()
 	main.position = Vector2.ZERO
 	main.size = Vector2(NODE_SIZE, NODE_SIZE)
-	main.color = ROOM_COLORS.get(node.room_type, Color.WHITE)
+	main.texture = ROOM_ICONS.get(node.room_type, null)
+	main.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	main.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	main.name = "Main"
 	main.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	container.add_child(main)
 
-	var label := Label.new()
-	label.text = ROOM_LABELS.get(node.room_type, "?")
-	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	label.position = Vector2.ZERO
-	label.size = Vector2(NODE_SIZE, NODE_SIZE)
-	label.add_theme_font_size_override("font_size", 14)
-	label.add_theme_color_override("font_color", Color.WHITE)
-	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	container.add_child(label)
+	var ring := Panel.new()
+	ring.name = "Ring"
+	ring.position = Vector2(-2, -2)
+	ring.size = Vector2(NODE_BORDER_SIZE, NODE_BORDER_SIZE)
+	ring.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var ring_style := StyleBoxFlat.new()
+	ring_style.bg_color = Color(0, 0, 0, 0)
+	ring_style.border_color = Color.WHITE
+	ring_style.border_width_top = 2
+	ring_style.border_width_bottom = 2
+	ring_style.border_width_left = 2
+	ring_style.border_width_right = 2
+	ring_style.set_corner_radius_all(int(NODE_BORDER_SIZE / 2.0))
+	ring.add_theme_stylebox_override("panel", ring_style)
+	ring.visible = false
+	container.add_child(ring)
 
 	container.gui_input.connect(_on_node_input.bind(node.node_index))
 	container.mouse_entered.connect(_on_node_hover.bind(node.node_index, true))
@@ -334,36 +345,44 @@ func _update_node_states() -> void:
 		var node := map.get_node_by_index(idx)
 		if not node:
 			continue
-		var border: ColorRect = container.get_node("Border")
-		var main: ColorRect = container.get_node("Main")
+		var main: TextureRect = container.get_node("Main")
+		var ring: Panel = container.get_node("Ring")
 
 		if node.is_visited and not node.is_current:
-			main.color = Color("#2a2a2a")
-			border.color = Color("#1a2e1a")
+			main.modulate = Color("#2a2a2a")
+			ring.visible = false
 			container.modulate.a = 1.0
 			container.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		elif node.is_current:
-			main.color = ROOM_COLORS.get(node.room_type, Color.WHITE)
-			border.color = Color.WHITE
+			main.modulate = Color.WHITE
+			ring.visible = true
+			_set_ring_color(ring, Color.WHITE)
 			container.modulate.a = 1.0
 			container.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			_add_current_particles(container)
 		elif idx in reachable:
-			main.color = ROOM_COLORS.get(node.room_type, Color.WHITE)
-			border.color = Color("#1a2e1a")
+			main.modulate = Color.WHITE
+			ring.visible = false
 			container.modulate.a = 0.6
 			container.mouse_filter = Control.MOUSE_FILTER_STOP
 		else:
-			main.color = ROOM_COLORS.get(node.room_type, Color.WHITE)
-			border.color = Color("#1a2e1a")
+			main.modulate = Color.WHITE
+			ring.visible = false
 			container.modulate.a = 0.6
 			container.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 	if selected_node_index >= 0 and node_controls.has(selected_node_index):
 		var sel_container: Control = node_controls[selected_node_index]
-		var sel_border: ColorRect = sel_container.get_node("Border")
-		sel_border.color = Color.WHITE
+		var sel_ring: Panel = sel_container.get_node("Ring")
+		sel_ring.visible = true
+		_set_ring_color(sel_ring, Color.WHITE)
 		sel_container.modulate.a = 1.0
+
+
+func _set_ring_color(ring: Panel, color: Color) -> void:
+	var style: StyleBoxFlat = ring.get_theme_stylebox("panel")
+	if style:
+		style.border_color = color
 
 
 func _add_current_particles(container: Control) -> void:
@@ -427,8 +446,8 @@ func _select_node(idx: int) -> void:
 		var old: Control = node_controls[selected_node_index]
 		old.modulate.a = 0.6
 		old.scale = Vector2.ONE
-		var old_border: ColorRect = old.get_node("Border")
-		old_border.color = Color("#1a2e1a")
+		var old_ring: Panel = old.get_node("Ring")
+		old_ring.visible = false
 
 	selected_node_index = idx
 	_update_node_states()
@@ -505,14 +524,21 @@ func _scroll_to_current() -> void:
 	var current_node := map.get_node_by_index(map.player_node_index)
 	if not current_node:
 		return
-	var scroll: ScrollContainer = get_node("MapScroll")
+	var scroll := find_child("MapScroll", true, false) as ScrollContainer
 	if not scroll:
 		return
-	var target_y: float = TOP_MARGIN + (9 - current_node.row) * VERTICAL_SPACING
-	var scroll_target: float = target_y - scroll.size.y / 2.0
-	scroll_target = clampf(scroll_target, 0, map_container.size.y - scroll.size.y)
+	var current_control: Control = node_controls.get(current_node.node_index)
+	if not current_control:
+		return
+
 	await get_tree().process_frame
-	scroll.scroll_vertical = int(scroll_target)
+	await get_tree().process_frame
+
+	var v_bar := scroll.get_v_scroll_bar()
+	var node_center_y: float = current_control.position.y + current_control.size.y / 2.0
+	var scroll_target: float = node_center_y - scroll.size.y / 2.0
+	var max_scroll: float = v_bar.max_value - scroll.size.y if v_bar else map_container.size.y - scroll.size.y
+	scroll.scroll_vertical = int(clampf(scroll_target, 0, max(0.0, max_scroll)))
 
 
 func _style_button(button: Button) -> void:

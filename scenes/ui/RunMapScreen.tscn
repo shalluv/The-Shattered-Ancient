@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3 uid="uid://ct5w8n86qg06e"]
 
-[ext_resource type="Script" path="res://scenes/ui/RunMapScreen.gd" id="1"]
+[ext_resource type="Script" uid="uid://b62utgxc604x1" path="res://scenes/ui/RunMapScreen.gd" id="1"]
 
-[node name="RunMapScreen" type="Control"]
+[node name="RunMapScreen" type="Control" unique_id=1394969544]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -11,7 +11,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="." unique_id=1275821934]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

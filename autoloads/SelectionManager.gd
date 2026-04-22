@@ -44,6 +44,14 @@ func _input(event: InputEvent) -> void:
 		_cycle_unit(1)
 	if event.is_action_pressed("prev_unit"):
 		_cycle_unit(-1)
+	if event.is_action_pressed("select_all_swordsman"):
+		_select_all_of_unit_type("swordsman")
+	if event.is_action_pressed("select_all_archer"):
+		_select_all_of_unit_type("archer")
+	if event.is_action_pressed("select_all_priest"):
+		_select_all_of_unit_type("priest")
+	if event.is_action_pressed("select_all_mage"):
+		_select_all_of_unit_type("mage")
 
 	# Control groups: Ctrl+key assigns, key recalls
 	if event is InputEventKey and event.pressed and not event.echo:
@@ -165,6 +173,21 @@ func _select_all_of_type(reference_unit: Node2D) -> void:
 	var all_units: Array = SwarmManager.units.duplicate()
 	all_units.append_array(SwarmManager.reviving_units)
 
+	for unit in all_units:
+		if not is_instance_valid(unit):
+			continue
+		var unit_type: String = ""
+		if unit.has_method("get_unit_type"):
+			unit_type = unit.get_unit_type()
+		if unit_type == target_type and unit.has_method("select"):
+			unit.select()
+			selected_units.append(unit)
+
+
+func _select_all_of_unit_type(target_type: String) -> void:
+	_deselect_all()
+	var all_units: Array = SwarmManager.units.duplicate()
+	all_units.append_array(SwarmManager.reviving_units)
 	for unit in all_units:
 		if not is_instance_valid(unit):
 			continue

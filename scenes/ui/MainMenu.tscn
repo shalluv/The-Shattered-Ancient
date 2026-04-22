@@ -1,6 +1,6 @@
-[gd_scene format=3 uid="uid://cm5gsru3jyvnk"]
+[gd_scene format=3 uid="uid://8luy8eencs6h"]
 
-[ext_resource type="Script" uid="uid://7tmkh8oet3f6" path="res://scenes/ui/MainMenu.gd" id="1_mainmenu"]
+[ext_resource type="Script" path="res://scenes/ui/MainMenu.gd" id="1_mainmenu"]
 
 [node name="MainMenu" type="Control" unique_id=48002882]
 layout_mode = 3
@@ -42,7 +42,7 @@ layout_mode = 2
 layout_mode = 2
 text = "Begin Run"
 
-[node name="SettingsButton" type="Button" parent="VBoxContainer"]
+[node name="SettingsButton" type="Button" parent="VBoxContainer" unique_id=1094976160]
 layout_mode = 2
 text = "Settings"
 

@@ -37,6 +37,7 @@ const SFX_DEFS: Dictionary = {
 
 # Scene name → BGM track key mapping
 const SCENE_BGM_MAP: Dictionary = {
+	"TitleScreen": "lobby",
 	"MainMenu": "lobby",
 	"Lobby": "lobby",
 	"MetaUpgrades": "lobby",

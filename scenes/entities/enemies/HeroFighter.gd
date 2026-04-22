@@ -18,8 +18,10 @@ const CONTACT_RAY_LENGTH: float = 14.0
 const PATH_RECALC_INTERVAL: float = 0.4
 const PATH_RECALC_TARGET_DRIFT: float = 30.0
 const WAYPOINT_THRESHOLD: float = 12.0
+## Match EnemyBase: top-down art faces −Y.
+const FACING_OFFSET: float = -PI / 2.0
 
-@onready var enemy_visual: ColorRect = $EnemyVisual
+@onready var enemy_visual: CanvasItem = $EnemyVisual
 @onready var hitbox_area: Area2D = $HitboxArea
 @onready var death_particles: GPUParticles2D = $DeathParticles
 @onready var damage_cooldown_timer: Timer = $DamageCooldownTimer
@@ -44,7 +46,7 @@ var physics_enabled: bool = true
 
 func _ready() -> void:
 	hero_max_hp = hero_hp
-	enemy_visual.color = _get_hero_color()
+	enemy_visual.modulate = Color.WHITE
 	add_to_group("enemies")
 	hitbox_area.area_entered.connect(_on_hitbox_area_entered)
 	damage_cooldown_timer.wait_time = attack_cooldown
@@ -73,6 +75,22 @@ func _physics_process(delta: float) -> void:
 
 	_hero_movement(delta, effective_speed, separation)
 	move_and_slide()
+	if _should_update_facing():
+		_update_facing()
+
+
+func _should_update_facing() -> bool:
+	return true
+
+
+func _update_facing() -> void:
+	if velocity.length_squared() <= 4.0:
+		return
+	var angle := velocity.angle() + FACING_OFFSET
+	if enemy_visual is Node2D:
+		(enemy_visual as Node2D).rotation = angle
+	elif enemy_visual is Control:
+		(enemy_visual as Control).rotation = angle
 
 
 func _hero_movement(_delta: float, effective_speed: float, separation: Vector2) -> void:
@@ -290,8 +308,8 @@ func _flash_damage() -> void:
 		return
 	var original_color := _get_hero_color()
 	var tw := create_tween()
-	tw.tween_property(enemy_visual, "color", Color.WHITE, 0.05)
-	tw.tween_property(enemy_visual, "color", original_color, 0.1)
+	tw.tween_property(enemy_visual, "modulate", Color(5.0, 5.0, 5.0, 1.0), 0.05)
+	tw.tween_property(enemy_visual, "modulate", original_color, 0.1)
 
 
 func die() -> void:

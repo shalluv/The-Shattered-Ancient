@@ -68,6 +68,9 @@ func _physics_process(delta: float) -> void:
 			velocity = Vector2.ZERO
 		move_and_slide()
 		front_indicator.rotation = facing_direction.angle()
+		var vis_attached := enemy_visual as Node2D
+		if vis_attached:
+			vis_attached.rotation = facing_direction.angle() + FACING_OFFSET
 	else:
 		super._physics_process(delta)
 		if velocity.length() > 1.0:

@@ -11,7 +11,7 @@ const CONTACT_RAY_LENGTH: float = 14.0
 const SEPARATION_RADIUS: float = 20.0
 const SEPARATION_STRENGTH: float = 80.0
 
-@onready var enemy_visual: ColorRect = $EnemyVisual
+@onready var enemy_visual: CanvasItem = $EnemyVisual
 @onready var hitbox_area: Area2D = $HitboxArea
 @onready var death_particles: GPUParticles2D = $DeathParticles
 @onready var absorption_particles: GPUParticles2D = $AbsorptionParticles
@@ -32,11 +32,13 @@ const PATH_RECALC_INTERVAL: float = 0.4
 const PATH_RECALC_TARGET_DRIFT: float = 30.0
 const PATH_ARRIVAL_THRESHOLD: float = 3.0
 const WAYPOINT_THRESHOLD: float = 12.0
+## Top-down art faces −Y; align with velocity.angle() (0 = +X).
+const FACING_OFFSET: float = -PI / 2.0
 var last_pathed_target: Vector2 = Vector2.ZERO
 
 
 func _ready() -> void:
-	enemy_visual.color = enemy_color
+	enemy_visual.modulate = enemy_color
 	add_to_group("enemies")
 	hitbox_area.collision_mask = 1  # Detect swarm_units (layer 1)
 	hitbox_area.area_entered.connect(_on_hitbox_area_entered)
@@ -61,6 +63,7 @@ func _physics_process(delta: float) -> void:
 		velocity = separation
 		if velocity.length_squared() > 0.1:
 			move_and_slide()
+		_update_facing()
 		return
 
 	var nearest_unit := _find_nearest_unit()
@@ -68,6 +71,7 @@ func _physics_process(delta: float) -> void:
 		velocity = separation
 		if velocity.length_squared() > 0.1:
 			move_and_slide()
+		_update_facing()
 		return
 
 	var direction := global_position.direction_to(nearest_unit.global_position)
@@ -92,6 +96,14 @@ func _physics_process(delta: float) -> void:
 				if not _follow_path_enemy(effective_speed, separation):
 					velocity = direction * effective_speed + separation
 	move_and_slide()
+	_update_facing()
+
+
+func _update_facing() -> void:
+	if velocity.length_squared() > 4.0:
+		var vis := enemy_visual as Node2D
+		if vis:
+			vis.rotation = velocity.angle() + FACING_OFFSET
 
 
 func _update_slow_state(delta: float) -> void:

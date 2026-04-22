@@ -49,6 +49,7 @@ func _physics_process(delta: float) -> void:
 		velocity = separation
 		if velocity.length_squared() > 0.1:
 			move_and_slide()
+		_update_facing()
 		trail_particles.emitting = false
 		return
 
@@ -59,6 +60,7 @@ func _physics_process(delta: float) -> void:
 		velocity = separation
 		if velocity.length_squared() > 0.1:
 			move_and_slide()
+		_update_facing()
 		trail_particles.emitting = false
 		return
 
@@ -88,6 +90,7 @@ func _physics_process(delta: float) -> void:
 				if not _follow_path_enemy(effective_speed, separation):
 					velocity = direction * effective_speed + separation
 	move_and_slide()
+	_update_facing()
 
 	trail_particles.emitting = velocity.length() > 10.0
 

@@ -24,9 +24,8 @@ func _ready() -> void:
 	enemy_hp = 1
 	move_speed = 12.5
 	damage = 1
-	enemy_color = GUARD_COLOR
+	enemy_color = Color.WHITE
 	super._ready()
-	enemy_visual.color = GUARD_COLOR
 	guard_position = global_position
 	_pick_patrol_target()
 
@@ -50,6 +49,7 @@ func _physics_process(delta: float) -> void:
 			var away_dir := target.global_position.direction_to(global_position)
 			velocity = away_dir * move_speed
 			move_and_slide()
+			_update_facing()
 			return
 		
 		if dist <= RANGED_ATTACK_RANGE and ranged_cooldown <= 0:
@@ -60,6 +60,7 @@ func _physics_process(delta: float) -> void:
 			var dir := global_position.direction_to(target.global_position)
 			velocity = dir * move_speed
 			move_and_slide()
+			_update_facing()
 
 
 func _patrol(delta: float) -> void:
@@ -80,6 +81,7 @@ func _patrol(delta: float) -> void:
 	var direction := global_position.direction_to(patrol_target)
 	velocity = direction * PATROL_SPEED
 	move_and_slide()
+	_update_facing()
 
 
 func _pick_patrol_target() -> void:
@@ -102,8 +104,8 @@ func _check_aggro() -> void:
 
 func _play_aggro_effect() -> void:
 	var tween := create_tween()
-	tween.tween_property(enemy_visual, "color", Color.PURPLE, 0.1)
-	tween.tween_property(enemy_visual, "color", GUARD_COLOR, 0.1)
+	tween.tween_property(enemy_visual, "modulate", Color.PURPLE, 0.1)
+	tween.tween_property(enemy_visual, "modulate", Color.WHITE, 0.1)
 
 
 func _shoot_projectile(target: Node2D) -> void:

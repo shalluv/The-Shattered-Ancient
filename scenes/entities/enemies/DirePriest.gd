@@ -16,9 +16,8 @@ func _ready() -> void:
 	enemy_hp = 3
 	move_speed = 15.0
 	damage = 0
-	enemy_color = PRIEST_COLOR
+	enemy_color = Color.WHITE
 	super._ready()
-	enemy_visual.color = PRIEST_COLOR
 	add_to_group("dire_priests")
 	SwarmManager.register_priority_target(self)
 	_create_aura_visual()
@@ -58,6 +57,7 @@ func _physics_process(delta: float) -> void:
 
 	if velocity.length_squared() > 0.1:
 		move_and_slide()
+	_update_facing()
 
 	_scan_neutrals(delta)
 

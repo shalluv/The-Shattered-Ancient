@@ -158,8 +158,8 @@ func _execute_attack() -> void:
 func _show_surge_telegraph() -> void:
 	var tween := create_tween()
 	var current_color := PHASE_2_COLOR if current_phase == 2 else BOSS_COLOR
-	tween.tween_property(enemy_visual, "color", Color.WHITE, SURGE_TELEGRAPH * 0.5)
-	tween.tween_property(enemy_visual, "color", current_color, SURGE_TELEGRAPH * 0.5)
+	tween.tween_property(enemy_visual, "modulate", Color(5.0, 5.0, 5.0, 1.0), SURGE_TELEGRAPH * 0.5)
+	tween.tween_property(enemy_visual, "modulate", current_color, SURGE_TELEGRAPH * 0.5)
 
 
 func _show_corruption_telegraph() -> void:
@@ -272,8 +272,8 @@ func _trigger_phase_2() -> void:
 		cam.shake(8.0, 1.5)
 
 	var tween := create_tween()
-	tween.tween_property(enemy_visual, "color", Color.WHITE, 0.3)
-	tween.tween_property(enemy_visual, "color", PHASE_2_COLOR, 0.5)
+	tween.tween_property(enemy_visual, "modulate", Color(5.0, 5.0, 5.0, 1.0), 0.3)
+	tween.tween_property(enemy_visual, "modulate", PHASE_2_COLOR, 0.5)
 
 	if aura_particles:
 		var aura_mat: ParticleProcessMaterial = aura_particles.process_material
@@ -295,12 +295,12 @@ func _trigger_phase_2() -> void:
 
 	for enemy in get_tree().get_nodes_in_group("enemies"):
 		if enemy != self and is_instance_valid(enemy):
-			var vis: ColorRect = enemy.get_node_or_null("EnemyVisual")
+			var vis: CanvasItem = enemy.get_node_or_null("EnemyVisual")
 			if vis:
-				var orig_color: Color = vis.color
+				var orig_color: Color = vis.modulate
 				var ftw := vis.create_tween()
-				ftw.tween_property(vis, "color", Color.WHITE, 0.15)
-				ftw.tween_property(vis, "color", orig_color, 0.15)
+				ftw.tween_property(vis, "modulate", Color(5.0, 5.0, 5.0, 1.0), 0.15)
+				ftw.tween_property(vis, "modulate", orig_color, 0.15)
 
 
 func _show_phase_2_text() -> void:
@@ -362,8 +362,8 @@ func die() -> void:
 
 	var death_color := PHASE_2_COLOR if current_phase == 2 else BOSS_COLOR
 	var tween := create_tween()
-	tween.tween_property(enemy_visual, "color", Color.WHITE, 0.25)
-	tween.tween_property(enemy_visual, "color", death_color, 0.25)
+	tween.tween_property(enemy_visual, "modulate", Color(5.0, 5.0, 5.0, 1.0), 0.25)
+	tween.tween_property(enemy_visual, "modulate", death_color, 0.25)
 
 	_create_boss_death_explosion()
 
@@ -389,10 +389,10 @@ func die() -> void:
 		if enemy != self and is_instance_valid(enemy) and not enemy.is_dying and enemy.has_method("die"):
 			if i > 0:
 				await get_tree().create_timer(0.1).timeout
-			var vis: ColorRect = enemy.get_node_or_null("EnemyVisual")
+			var vis: CanvasItem = enemy.get_node_or_null("EnemyVisual")
 			if vis:
 				var etw := vis.create_tween()
-				etw.tween_property(vis, "color", Color.WHITE, 0.15)
+				etw.tween_property(vis, "modulate", Color(5.0, 5.0, 5.0, 1.0), 0.15)
 				etw.tween_callback(enemy.die)
 			else:
 				enemy.die()

@@ -580,22 +580,31 @@ func _switch_to_audio() -> void:
 
 
 func _build_audio_panel() -> void:
-	var volume_header := Label.new()
-	volume_header.text = "VOLUME"
-	volume_header.add_theme_font_size_override("font_size", 18)
-	volume_header.add_theme_color_override("font_color", GOLD_SOFT)
-	_audio_content.add_child(volume_header)
+	var header_box := HBoxContainer.new()
+	header_box.add_theme_constant_override("separation", 10)
+	_audio_content.add_child(header_box)
 
-	var sep := DividerDrawer.new()
-	sep.custom_minimum_size = Vector2(0, 4)
-	_audio_content.add_child(sep)
+	var diamond := DiamondMarkDrawer.new()
+	diamond.custom_minimum_size = Vector2(10, 10)
+	diamond.color = GOLD
+	header_box.add_child(diamond)
 
-	_build_volume_slider("Overall", "Master")
-	_build_volume_slider("Music", "Music")
-	_build_volume_slider("SFX", "SFX")
+	var header := Label.new()
+	header.text = "VOLUME"
+	header.add_theme_font_size_override("font_size", 16)
+	header.add_theme_color_override("font_color", GOLD_SOFT)
+	header_box.add_child(header)
+
+	var divider := DividerDrawer.new()
+	divider.custom_minimum_size = Vector2(0, 4)
+	_audio_content.add_child(divider)
+
+	_build_volume_slider("Overall", "Master", GOLD_BRIGHT)
+	_build_volume_slider("Music", "Music", Color(0.55, 0.75, 1.0))
+	_build_volume_slider("SFX", "SFX", Color(0.95, 0.65, 0.35))
 
 
-func _build_volume_slider(label_text: String, bus_name: String) -> void:
+func _build_volume_slider(label_text: String, bus_name: String, accent: Color) -> void:
 	var row_panel := PanelContainer.new()
 	row_panel.custom_minimum_size = Vector2(0, 48)
 
@@ -605,18 +614,36 @@ func _build_volume_slider(label_text: String, bus_name: String) -> void:
 	row_style.set_border_width_all(1)
 	row_style.set_corner_radius_all(4)
 	row_style.set_content_margin_all(0)
-	row_style.content_margin_left = 16
-	row_style.content_margin_right = 16
+	row_style.content_margin_left = 14
+	row_style.content_margin_right = 14
 	row_panel.add_theme_stylebox_override("panel", row_style)
+
+	row_panel.mouse_entered.connect(func() -> void:
+		row_style.bg_color = Color(0.16, 0.16, 0.20, 0.7)
+		row_style.border_color = Color(0.65, 0.55, 0.28, 0.6)
+		row_panel.queue_redraw()
+	)
+	row_panel.mouse_exited.connect(func() -> void:
+		row_style.bg_color = Color(0.10, 0.11, 0.14, 0.55)
+		row_style.border_color = Color(0.40, 0.35, 0.22, 0.4)
+		row_panel.queue_redraw()
+	)
 	_audio_content.add_child(row_panel)
 
 	var hbox := HBoxContainer.new()
-	hbox.add_theme_constant_override("separation", 16)
+	hbox.add_theme_constant_override("separation", 14)
 	row_panel.add_child(hbox)
+
+	# TODO: Replace with channel-icon art asset
+	var dot := ColorRect.new()
+	dot.custom_minimum_size = Vector2(10, 10)
+	dot.color = accent
+	dot.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	hbox.add_child(dot)
 
 	var name_label := Label.new()
 	name_label.text = label_text
-	name_label.custom_minimum_size = Vector2(100, 0)
+	name_label.custom_minimum_size = Vector2(90, 0)
 	name_label.add_theme_font_size_override("font_size", 15)
 	name_label.add_theme_color_override("font_color", PARCHMENT)
 	name_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
@@ -629,19 +656,74 @@ func _build_volume_slider(label_text: String, bus_name: String) -> void:
 	slider.value = AudioManager.get_bus_volume(bus_name) * 100.0
 	slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	slider.custom_minimum_size = Vector2(200, 0)
+	_style_slider(slider, accent)
 	hbox.add_child(slider)
 	_sliders[bus_name] = slider
 
+	var value_badge := PanelContainer.new()
+	value_badge.custom_minimum_size = Vector2(56, 28)
+	var badge_style := StyleBoxFlat.new()
+	badge_style.bg_color = Color(0.06, 0.07, 0.10, 0.95)
+	badge_style.border_color = Color(0.55, 0.50, 0.35, 0.7)
+	badge_style.set_border_width_all(1)
+	badge_style.set_corner_radius_all(3)
+	badge_style.set_content_margin_all(2)
+	value_badge.add_theme_stylebox_override("panel", badge_style)
+	hbox.add_child(value_badge)
+
 	var value_label := Label.new()
 	value_label.text = "%d" % int(slider.value)
-	value_label.custom_minimum_size = Vector2(40, 0)
-	value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	value_label.add_theme_font_size_override("font_size", 15)
-	value_label.add_theme_color_override("font_color", GOLD_BRIGHT)
+	value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	value_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	hbox.add_child(value_label)
+	value_label.add_theme_font_size_override("font_size", 14)
+	value_label.add_theme_color_override("font_color", GOLD_BRIGHT)
+	value_badge.add_child(value_label)
 
 	slider.value_changed.connect(func(val: float) -> void:
 		AudioManager.set_bus_volume(bus_name, val / 100.0)
 		value_label.text = "%d" % int(val)
 	)
+
+
+func _style_slider(slider: HSlider, accent: Color) -> void:
+	var track := StyleBoxFlat.new()
+	track.bg_color = Color(0.06, 0.07, 0.10, 0.95)
+	track.border_color = Color(0.40, 0.35, 0.22, 0.6)
+	track.set_border_width_all(1)
+	track.set_corner_radius_all(3)
+	track.content_margin_top = 6
+	track.content_margin_bottom = 6
+	slider.add_theme_stylebox_override("slider", track)
+
+	var fill := StyleBoxFlat.new()
+	fill.bg_color = accent
+	fill.bg_color.a = 0.55
+	fill.border_color = accent
+	fill.set_border_width_all(1)
+	fill.set_corner_radius_all(3)
+	slider.add_theme_stylebox_override("grabber_area", fill)
+	slider.add_theme_stylebox_override("grabber_area_highlight", fill)
+
+	slider.add_theme_icon_override("grabber", _grabber_texture(accent))
+	slider.add_theme_icon_override("grabber_highlight", _grabber_texture(accent.lightened(0.15)))
+
+
+func _grabber_texture(c: Color) -> ImageTexture:
+	var size := 14
+	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
+	img.fill(Color(0, 0, 0, 0))
+	var center := Vector2(size / 2.0, size / 2.0)
+	var radius: float = size / 2.0 - 1.0
+	for y in size:
+		for x in size:
+			var d: float = Vector2(x + 0.5, y + 0.5).distance_to(center)
+			if d <= radius:
+				var t: float = clamp(1.0 - (d / radius), 0.0, 1.0)
+				var col := c
+				col.a = 0.85 + 0.15 * t
+				img.set_pixel(x, y, col)
+			elif d <= radius + 1.0:
+				img.set_pixel(x, y, Color(c.r, c.g, c.b, 0.4))
+	return ImageTexture.create_from_image(img)
+
+

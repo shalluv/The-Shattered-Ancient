@@ -326,7 +326,7 @@ func die() -> void:
 	SwarmManager.unit_died_with_info.emit(unit_type, global_position)
 	SwarmManager.unregister_unit(self)
 
-	# TODO: Add unit death sound effect
+	AudioManager.play_sfx("unit_death")
 	death_particles.emitting = true
 	var cam := get_viewport().get_camera_2d()
 	if cam and cam.has_method("shake"):
@@ -407,6 +407,7 @@ func _on_attack_area_entered(other_area: Area2D) -> void:
 	if "last_attacker" in enemy:
 		enemy.last_attacker = self
 	enemy.take_hit(get_effective_damage())
+	AudioManager.play_sfx("attack_hit")
 	can_attack = false
 	attack_cooldown_timer.start()
 

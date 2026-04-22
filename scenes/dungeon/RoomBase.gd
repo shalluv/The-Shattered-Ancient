@@ -345,7 +345,8 @@ func _on_unit_registered_meta(unit: Node2D) -> void:
 
 
 func _on_room_cleared() -> void:
-	# TODO: Add room clear sound effect
+	AudioManager.play_sfx("room_clear")
+	AudioManager.stop_bgm()
 	RunManager.award_room_shards(false)
 	room_clear_particles.global_position = game_camera.global_position
 	room_clear_particles.emitting = true

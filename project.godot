@@ -21,6 +21,7 @@ import/import_plugin/generate_bake_files=true
 
 [autoload]
 
+AudioManager="*res://autoloads/AudioManager.gd"
 SwarmManager="*res://autoloads/SwarmManager.gd"
 RunManager="*res://autoloads/RunManager.gd"
 MetaProgress="*res://autoloads/MetaProgress.gd"

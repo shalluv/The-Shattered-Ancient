@@ -21,6 +21,11 @@ var _badges: Dictionary = {}
 var _row_panels: Dictionary = {}
 var _is_standalone: bool = false
 var _ui_root: Control = null
+var _hotkey_tab_btn: Button = null
+var _audio_tab_btn: Button = null
+var _hotkey_scroll: ScrollContainer = null
+var _audio_content: VBoxContainer = null
+var _sliders: Dictionary = {}
 
 
 func _ready() -> void:
@@ -184,19 +189,41 @@ func _build_main_panel() -> void:
 		sub_div.custom_minimum_size = Vector2(0, 4)
 		vbox.add_child(sub_div)
 
-	var scroll := ScrollContainer.new()
-	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	vbox.add_child(scroll)
+	var tab_bar := HBoxContainer.new()
+	tab_bar.add_theme_constant_override("separation", 0)
+	vbox.add_child(tab_bar)
+
+	_hotkey_tab_btn = _make_tab_button("HOTKEYS", true)
+	_hotkey_tab_btn.pressed.connect(_switch_to_hotkeys)
+	_wire_sfx(_hotkey_tab_btn)
+	tab_bar.add_child(_hotkey_tab_btn)
+
+	_audio_tab_btn = _make_tab_button("AUDIO", false)
+	_audio_tab_btn.pressed.connect(_switch_to_audio)
+	_wire_sfx(_audio_tab_btn)
+	tab_bar.add_child(_audio_tab_btn)
+
+	_hotkey_scroll = ScrollContainer.new()
+	_hotkey_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_hotkey_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_hotkey_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	vbox.add_child(_hotkey_scroll)
 
 	var content := VBoxContainer.new()
 	content.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	content.add_theme_constant_override("separation", 22)
-	scroll.add_child(content)
+	_hotkey_scroll.add_child(content)
 
 	for category in SettingsManager.ACTION_CATEGORIES:
 		_build_category(content, category, SettingsManager.ACTION_CATEGORIES[category])
+
+	_audio_content = VBoxContainer.new()
+	_audio_content.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_audio_content.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_audio_content.add_theme_constant_override("separation", 18)
+	_audio_content.visible = false
+	vbox.add_child(_audio_content)
+	_build_audio_panel()
 
 
 # ── Category section ────────────────────────────────────────
@@ -287,6 +314,7 @@ func _build_keybind_row(parent: VBoxContainer, action: String, label_text: Strin
 	badge.text = SettingsManager.get_event_text(action)
 	badge.pressed.connect(_on_badge_pressed.bind(action, badge))
 	_style_badge(badge, false)
+	_wire_sfx(badge)
 	hbox.add_child(badge)
 	_badges[action] = badge
 
@@ -364,6 +392,7 @@ func _build_button_bar() -> void:
 	reset_btn.custom_minimum_size = Vector2(180, 48)
 	reset_btn.pressed.connect(_on_reset_pressed)
 	_style_button(reset_btn)
+	_wire_sfx(reset_btn)
 	hbox.add_child(reset_btn)
 
 	var back_btn := Button.new()
@@ -371,6 +400,7 @@ func _build_button_bar() -> void:
 	back_btn.custom_minimum_size = Vector2(180, 48)
 	back_btn.pressed.connect(_go_back)
 	_style_button(back_btn)
+	_wire_sfx(back_btn)
 	hbox.add_child(back_btn)
 
 
@@ -491,3 +521,127 @@ func _on_reset_pressed() -> void:
 		var badge: Button = _badges[action]
 		badge.text = SettingsManager.get_event_text(action)
 		_style_badge(badge, false)
+
+
+# ── Tab switching & audio panel ────────────────────────────
+
+func _wire_sfx(btn: Button) -> void:
+	btn.button_down.connect(func() -> void:
+		if not btn.disabled: AudioManager.play_sfx("ui_click")
+	)
+	btn.mouse_entered.connect(func() -> void:
+		if not btn.disabled: AudioManager.play_sfx("ui_hover")
+	)
+
+
+func _make_tab_button(label: String, active: bool) -> Button:
+	var btn := Button.new()
+	btn.text = label
+	btn.custom_minimum_size = Vector2(140, 36)
+	_style_tab_button(btn, active)
+	return btn
+
+
+func _style_tab_button(btn: Button, active: bool) -> void:
+	var style := StyleBoxFlat.new()
+	if active:
+		style.bg_color = Color(0.14, 0.15, 0.19, 0.95)
+		style.border_color = Color(0.75, 0.65, 0.30, 0.75)
+	else:
+		style.bg_color = Color(0.06, 0.07, 0.10, 0.85)
+		style.border_color = Color(0.35, 0.30, 0.20, 0.55)
+	style.set_border_width_all(1)
+	style.border_width_bottom = 0
+	style.set_corner_radius_all(0)
+	style.corner_radius_top_left = 4
+	style.corner_radius_top_right = 4
+	style.set_content_margin_all(8)
+	btn.add_theme_stylebox_override("normal", style)
+	btn.add_theme_stylebox_override("hover", style)
+	btn.add_theme_stylebox_override("pressed", style)
+	var font_c: Color = GOLD_BRIGHT if active else GOLD_SOFT.darkened(0.2)
+	btn.add_theme_color_override("font_color", font_c)
+	btn.add_theme_color_override("font_hover_color", GOLD_BRIGHT)
+	btn.add_theme_font_size_override("font_size", 15)
+
+
+func _switch_to_hotkeys() -> void:
+	_hotkey_scroll.visible = true
+	_audio_content.visible = false
+	_style_tab_button(_hotkey_tab_btn, true)
+	_style_tab_button(_audio_tab_btn, false)
+
+
+func _switch_to_audio() -> void:
+	_hotkey_scroll.visible = false
+	_audio_content.visible = true
+	_style_tab_button(_hotkey_tab_btn, false)
+	_style_tab_button(_audio_tab_btn, true)
+
+
+func _build_audio_panel() -> void:
+	var volume_header := Label.new()
+	volume_header.text = "VOLUME"
+	volume_header.add_theme_font_size_override("font_size", 18)
+	volume_header.add_theme_color_override("font_color", GOLD_SOFT)
+	_audio_content.add_child(volume_header)
+
+	var sep := DividerDrawer.new()
+	sep.custom_minimum_size = Vector2(0, 4)
+	_audio_content.add_child(sep)
+
+	_build_volume_slider("Overall", "Master")
+	_build_volume_slider("Music", "Music")
+	_build_volume_slider("SFX", "SFX")
+
+
+func _build_volume_slider(label_text: String, bus_name: String) -> void:
+	var row_panel := PanelContainer.new()
+	row_panel.custom_minimum_size = Vector2(0, 48)
+
+	var row_style := StyleBoxFlat.new()
+	row_style.bg_color = Color(0.10, 0.11, 0.14, 0.55)
+	row_style.border_color = Color(0.40, 0.35, 0.22, 0.4)
+	row_style.set_border_width_all(1)
+	row_style.set_corner_radius_all(4)
+	row_style.set_content_margin_all(0)
+	row_style.content_margin_left = 16
+	row_style.content_margin_right = 16
+	row_panel.add_theme_stylebox_override("panel", row_style)
+	_audio_content.add_child(row_panel)
+
+	var hbox := HBoxContainer.new()
+	hbox.add_theme_constant_override("separation", 16)
+	row_panel.add_child(hbox)
+
+	var name_label := Label.new()
+	name_label.text = label_text
+	name_label.custom_minimum_size = Vector2(100, 0)
+	name_label.add_theme_font_size_override("font_size", 15)
+	name_label.add_theme_color_override("font_color", PARCHMENT)
+	name_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	hbox.add_child(name_label)
+
+	var slider := HSlider.new()
+	slider.min_value = 0.0
+	slider.max_value = 100.0
+	slider.step = 1.0
+	slider.value = AudioManager.get_bus_volume(bus_name) * 100.0
+	slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	slider.custom_minimum_size = Vector2(200, 0)
+	hbox.add_child(slider)
+	_sliders[bus_name] = slider
+
+	var value_label := Label.new()
+	value_label.text = "%d" % int(slider.value)
+	value_label.custom_minimum_size = Vector2(40, 0)
+	value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	value_label.add_theme_font_size_override("font_size", 15)
+	value_label.add_theme_color_override("font_color", GOLD_BRIGHT)
+	value_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	hbox.add_child(value_label)
+
+	slider.value_changed.connect(func(val: float) -> void:
+		AudioManager.set_bus_volume(bus_name, val / 100.0)
+		value_label.text = "%d" % int(val)
+	)

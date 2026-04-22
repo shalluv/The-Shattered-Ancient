@@ -367,7 +367,7 @@ func die() -> void:
 
 	_create_boss_death_explosion()
 
-	# TODO: Add boss death sound effect
+	AudioManager.play_sfx("enemy_death")
 	var cam := get_viewport().get_camera_2d()
 	if cam and cam.has_method("shake"):
 		cam.shake(12.0, 0.6)

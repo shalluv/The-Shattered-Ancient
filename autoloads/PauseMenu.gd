@@ -171,6 +171,7 @@ func _make_button(label_text: String) -> Button:
 	btn.add_theme_font_size_override("font_size", 18)
 
 	btn.button_down.connect(func() -> void:
+		if not btn.disabled: AudioManager.play_sfx("ui_click")
 		btn.pivot_offset = btn.size / 2.0
 		var tw := btn.create_tween()
 		tw.tween_property(btn, "scale", Vector2(0.97, 0.97), 0.04)
@@ -178,6 +179,9 @@ func _make_button(label_text: String) -> Button:
 	btn.button_up.connect(func() -> void:
 		var tw := btn.create_tween()
 		tw.tween_property(btn, "scale", Vector2.ONE, 0.04)
+	)
+	btn.mouse_entered.connect(func() -> void:
+		if not btn.disabled: AudioManager.play_sfx("ui_hover")
 	)
 
 	return btn

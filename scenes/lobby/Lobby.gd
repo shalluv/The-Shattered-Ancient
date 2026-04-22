@@ -62,6 +62,7 @@ func _style_button(button: Button) -> void:
 	button.add_theme_font_size_override("font_size", 17)
 
 	button.button_down.connect(func() -> void:
+		if not button.disabled: AudioManager.play_sfx("ui_click")
 		button.pivot_offset = button.size / 2.0
 		var tw := button.create_tween()
 		tw.tween_property(button, "scale", Vector2(0.95, 0.95), 0.05)
@@ -69,6 +70,9 @@ func _style_button(button: Button) -> void:
 	button.button_up.connect(func() -> void:
 		var tw := button.create_tween()
 		tw.tween_property(button, "scale", Vector2.ONE, 0.05)
+	)
+	button.mouse_entered.connect(func() -> void:
+		if not button.disabled: AudioManager.play_sfx("ui_hover")
 	)
 
 
@@ -142,11 +146,6 @@ func _build_ui() -> void:
 	shard_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	center_container.add_child(shard_label)
 
-	shard_label.pivot_offset = Vector2(280, 12)
-	var shard_pulse := shard_label.create_tween()
-	shard_pulse.set_loops()
-	shard_pulse.tween_property(shard_label, "scale", Vector2(1.03, 1.03), 1.2)
-	shard_pulse.tween_property(shard_label, "scale", Vector2.ONE, 1.2)
 
 	dialogue_label = Label.new()
 	dialogue_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER

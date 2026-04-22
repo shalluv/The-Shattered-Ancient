@@ -423,10 +423,14 @@ func _style_button(button: Button) -> void:
 		button.pivot_offset = button.size / 2.0
 		var tw := button.create_tween()
 		tw.tween_property(button, "scale", Vector2(0.95, 0.95), 0.05)
+		if not button.disabled: AudioManager.play_sfx("ui_click")
 	)
 	button.button_up.connect(func() -> void:
 		var tw := button.create_tween()
 		tw.tween_property(button, "scale", Vector2.ONE, 0.05)
+	)
+	button.mouse_entered.connect(func() -> void:
+		if not button.disabled: AudioManager.play_sfx("ui_hover")
 	)
 
 

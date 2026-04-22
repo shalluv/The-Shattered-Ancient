@@ -300,6 +300,7 @@ func die() -> void:
 	is_dying = true
 	remove_from_group("enemies")
 
+	AudioManager.play_sfx("enemy_death")
 	death_particles.emitting = true
 	var cam := get_viewport().get_camera_2d()
 	if cam and cam.has_method("shake"):

@@ -157,6 +157,12 @@ func _show_shop_ui() -> void:
 	leave_btn.text = "Leave Shop"
 	leave_btn.custom_minimum_size = Vector2(200, 40)
 	leave_btn.pressed.connect(_on_leave_shop)
+	leave_btn.button_down.connect(func() -> void:
+		if not leave_btn.disabled: AudioManager.play_sfx("ui_click")
+	)
+	leave_btn.mouse_entered.connect(func() -> void:
+		if not leave_btn.disabled: AudioManager.play_sfx("ui_hover")
+	)
 	vbox.add_child(leave_btn)
 
 	hud_layer.add_child(shop_overlay)
@@ -218,6 +224,12 @@ func _create_shop_card(item: Dictionary, gold_label: Label) -> Button:
 		button.disabled = true
 		button.modulate.a = 0.5
 
+	button.button_down.connect(func() -> void:
+		if not button.disabled: AudioManager.play_sfx("ui_click")
+	)
+	button.mouse_entered.connect(func() -> void:
+		if not button.disabled: AudioManager.play_sfx("ui_hover")
+	)
 	button.pressed.connect(_on_item_purchased.bind(item, button, gold_label))
 	return button
 
@@ -226,6 +238,7 @@ func _on_item_purchased(item: Dictionary, button: Button, gold_label: Label) -> 
 	if not RunManager.spend_gold(item["cost"]):
 		return
 
+	AudioManager.play_sfx("shop_buy")
 	_apply_item(item["id"])
 
 	button.disabled = true

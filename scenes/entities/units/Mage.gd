@@ -97,6 +97,7 @@ func _fire_mage_projectile(target: Node2D) -> void:
 	projectile.target_position = target.global_position
 	projectile.aoe_radius = aoe_radius
 	get_parent().add_child(projectile)
+	AudioManager.play_sfx("projectile_fire")
 
 
 func apply_arcane_surge(multiplier: float) -> void:

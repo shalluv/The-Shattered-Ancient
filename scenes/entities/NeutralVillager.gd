@@ -51,13 +51,12 @@ func _ready() -> void:
 	var sprite_node := villager_visual.get_node_or_null("Sprite2D")
 	if sprite_node is Sprite2D:
 		unit_sprite = sprite_node
-		villager_visual.color = Color(0, 0, 0, 0)
 	home_position = global_position
 	add_to_group("neutrals")
 	if is_instance_valid(BoonManager):
 		conversion_time = BoonManager.get_conversion_time()
 	conversion_timer = conversion_time
-	villager_visual.color = villager_color
+	villager_visual.color = Color(villager_color.r, villager_color.g, villager_color.b, 0.0)
 	_setup_death_particles()
 	call_deferred("_pick_wander_target")
 	call_deferred("_check_initial_position")
@@ -317,10 +316,10 @@ func _convert() -> void:
 			tween.tween_property(unit_sprite, "modulate", Color.WHITE, 0.08)
 			tween.tween_property(unit_sprite, "modulate", Color(1.0, 0.843, 0.0, 1.0), 0.08)
 	else:
-		tween.tween_property(villager_visual, "color", Color(1.0, 0.843, 0.0, 1.0), 0.5)
+		tween.tween_property(villager_visual, "modulate", Color(1.0, 0.843, 0.0, 1.0), 0.5)
 		for i in 3:
-			tween.tween_property(villager_visual, "color", Color.WHITE, 0.08)
-			tween.tween_property(villager_visual, "color", Color(1.0, 0.843, 0.0, 1.0), 0.08)
+			tween.tween_property(villager_visual, "modulate", Color.WHITE, 0.08)
+			tween.tween_property(villager_visual, "modulate", Color(1.0, 0.843, 0.0, 1.0), 0.08)
 
 	_play_conversion_particles()
 

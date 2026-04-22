@@ -379,6 +379,13 @@ func _build_ui() -> void:
 	_style_button(enter_button)
 	button_container.add_child(enter_button)
 
+	var back_btn := Button.new()
+	back_btn.text = "Back to Lobby"
+	back_btn.custom_minimum_size = Vector2(280, 48)
+	back_btn.pressed.connect(_on_back_pressed)
+	_style_button(back_btn)
+	button_container.add_child(back_btn)
+
 	_update_display()
 
 
@@ -562,3 +569,7 @@ func _on_enter_pressed() -> void:
 			army[unit_type] = counts[unit_type]
 	RunManager.set_drafted_army(army)
 	SceneTransition.transition_to("res://scenes/ui/RunMapScreen.tscn")
+
+
+func _on_back_pressed() -> void:
+	SceneTransition.transition_to("res://scenes/lobby/Lobby.tscn")

@@ -155,6 +155,7 @@ func die() -> void:
 	is_dying = true
 	remove_from_group("enemies")
 
+	AudioManager.play_sfx("enemy_death")
 	death_particles.emitting = true
 	enemy_visual.visible = false
 	hitbox_area.set_deferred("monitoring", false)

@@ -19,7 +19,7 @@ func _ready() -> void:
 
 
 func _on_room_cleared() -> void:
-	pass
+	AudioManager.stop_bgm()
 
 
 func _spawn_terrain_zones() -> void:

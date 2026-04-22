@@ -120,6 +120,7 @@ func die() -> void:
 	is_dying = true
 	remove_from_group("enemies")
 
+	AudioManager.play_sfx("enemy_death")
 	hound_died.emit(self)
 
 	if trail_particles:

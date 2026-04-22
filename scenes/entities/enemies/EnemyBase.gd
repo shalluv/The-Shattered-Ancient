@@ -245,7 +245,7 @@ func die() -> void:
 	is_dying = true
 	remove_from_group("enemies")
 
-	# TODO: Add enemy death sound effect
+	AudioManager.play_sfx("enemy_death")
 	death_particles.emitting = true
 	var cam := get_viewport().get_camera_2d()
 	if cam and cam.has_method("shake"):
@@ -267,7 +267,7 @@ func die() -> void:
 
 
 func _play_absorption_effect() -> void:
-	# TODO: Add unit absorption sound effect
+	AudioManager.play_sfx("absorption")
 	absorption_particles.global_position = global_position
 	absorption_particles.emitting = true
 	SwarmManager.on_unit_absorbed(global_position)

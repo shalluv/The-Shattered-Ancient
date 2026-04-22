@@ -101,6 +101,8 @@ func die() -> void:
 	is_dying = true
 	remove_from_group("enemies")
 
+	AudioManager.play_sfx("enemy_death")
+
 	if is_attached and is_instance_valid(group):
 		group.on_unit_died(self)
 

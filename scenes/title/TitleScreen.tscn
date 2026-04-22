@@ -10,6 +10,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 0
 script = ExtResource("1_titlescreen")
 
 [node name="Background" type="TextureRect" parent="." unique_id=622194723]
@@ -41,3 +42,4 @@ theme_override_font_sizes/font_size = 22
 text = "Press any button to continue"
 horizontal_alignment = 1
 vertical_alignment = 1
+mouse_filter = 2

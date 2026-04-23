@@ -32,10 +32,10 @@ func _boss_entry_sequence() -> void:
 	if not is_instance_valid(boss_instance):
 		return
 
-	var boss_visual: ColorRect = boss_instance.get_node("EnemyVisual")
+	var boss_visual: CanvasItem = boss_instance.get_node("EnemyVisual")
 	var tween := create_tween()
-	tween.tween_property(boss_visual, "color", Color(0.545, 0.0, 0.0), 0.3)
-	tween.tween_property(boss_visual, "color", Color(0.294, 0.0, 0.51), 0.3)
+	tween.tween_property(boss_visual, "modulate", Color(0.545, 0.0, 0.0), 0.3)
+	tween.tween_property(boss_visual, "modulate", Color(0.294, 0.0, 0.51), 0.3)
 
 	game_camera.shake(3.0, 0.5)
 
